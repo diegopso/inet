@@ -14,12 +14,7 @@ module GPtpEndstation extends StandardHost
 {
     parameters:
         eth[*].typename = "EthernetInterfaceGPTP";
-    submodules:
-        clockGPTP: Clock {
-            @display("p=125,738");
-        }
-        tableGPTP: TableGPTP {
-            @display("p=558,259");
-        }
+        tableGPTP.typename = "TableGPTP";
+        clockGPTP.typename = "Clock";
 }
 

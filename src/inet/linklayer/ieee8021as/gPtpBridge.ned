@@ -14,14 +14,9 @@ module GPtpBridge extends EthernetSwitch
 {
     parameters:
         eth[*].typename = "EthernetInterfaceGPTP";
-    submodules:
-        tableGPTP: TableGPTP {
-            // 11 - Grandmaster, 12 - Bridge, 13 - Slave
-            gPtpNodeType = 12;
-            @display("p=100,700");
-        }
-        clockGPTP: Clock {
-            @display("p=100,800");
-        }
+        tableGPTP.typename = "TableGPTP";
+        clockGPTP.typename = "Clock";
+        // 11 - Grandmaster, 12 - Bridge, 13 - Slave
+        tableGPTP.gPtpNodeType = 12;
 }
 
