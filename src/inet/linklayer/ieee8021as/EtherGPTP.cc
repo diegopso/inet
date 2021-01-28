@@ -53,6 +53,7 @@ void EtherGPTP::initialize(int stage)
         portType = par("portType");
         nodeType = tableGptp->par("gPtpNodeType");
         syncInterval = par("syncInterval");
+        withFcs = par("withFcs");
 
         /* following parameters are used to schedule follow_up and pdelay_resp messages.
          * These numbers must be enough large to prevent creating queue in MAC layer.
@@ -217,9 +218,20 @@ void EtherGPTP::sendSync(clocktime_t value)
     gptp->setSentTime(sentTimeSyncSync);
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
-    const auto& ethernetFcs = makeShared<EthernetFcs>();
-    ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
-    packet->insertAtBack(ethernetFcs);
+
+    B paddingLength = MIN_ETHERNET_FRAME_BYTES - ETHER_FCS_BYTES - packet->getDataLength();
+    if (paddingLength > B(0)) {
+        const auto& ethPadding = makeShared<EthernetPadding>();
+        ethPadding->setChunkLength(paddingLength);
+        packet->insertAtBack(ethPadding);
+    }
+
+    if (withFcs) {
+        const auto& ethernetFcs = makeShared<EthernetFcs>();
+        ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
+        packet->insertAtBack(ethernetFcs);
+    }
+
     send(packet, "lowerLayerOut");
 
     if (NULL == selfMsgFollowUp)
@@ -256,9 +268,20 @@ void EtherGPTP::sendFollowUp()
     gptp->setRateRatio(tableGptp->getRateRatio());
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
-    const auto& ethernetFcs = makeShared<EthernetFcs>();
-    ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
-    packet->insertAtBack(ethernetFcs);
+
+    B paddingLength = MIN_ETHERNET_FRAME_BYTES - ETHER_FCS_BYTES - packet->getDataLength();
+    if (paddingLength > B(0)) {
+        const auto& ethPadding = makeShared<EthernetPadding>();
+        ethPadding->setChunkLength(paddingLength);
+        packet->insertAtBack(ethPadding);
+    }
+
+    if (withFcs) {
+        const auto& ethernetFcs = makeShared<EthernetFcs>();
+        ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
+        packet->insertAtBack(ethernetFcs);
+    }
+
     send(packet, "lowerLayerOut");
 }
 
@@ -284,9 +307,20 @@ void EtherGPTP::sendPdelayResp()
     gptp->setRequestReceiptTimestamp(receivedTimeResponder);
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
-    const auto& ethernetFcs = makeShared<EthernetFcs>();
-    ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
-    packet->insertAtBack(ethernetFcs);
+
+    B paddingLength = MIN_ETHERNET_FRAME_BYTES - ETHER_FCS_BYTES - packet->getDataLength();
+    if (paddingLength > B(0)) {
+        const auto& ethPadding = makeShared<EthernetPadding>();
+        ethPadding->setChunkLength(paddingLength);
+        packet->insertAtBack(ethPadding);
+    }
+
+    if (withFcs) {
+        const auto& ethernetFcs = makeShared<EthernetFcs>();
+        ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
+        packet->insertAtBack(ethernetFcs);
+    }
+
     send(packet, "lowerLayerOut");
     sendPdelayRespFollowUp();
 }
@@ -303,9 +337,20 @@ void EtherGPTP::sendPdelayRespFollowUp()
     gptp->setResponseOriginTimestamp(receivedTimeResponder + (clocktime_t)PDelayRespInterval);
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
-    const auto& ethernetFcs = makeShared<EthernetFcs>();
-    ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
-    packet->insertAtBack(ethernetFcs);
+
+    B paddingLength = MIN_ETHERNET_FRAME_BYTES - ETHER_FCS_BYTES - packet->getDataLength();
+    if (paddingLength > B(0)) {
+        const auto& ethPadding = makeShared<EthernetPadding>();
+        ethPadding->setChunkLength(paddingLength);
+        packet->insertAtBack(ethPadding);
+    }
+
+    if (withFcs) {
+        const auto& ethernetFcs = makeShared<EthernetFcs>();
+        ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
+        packet->insertAtBack(ethernetFcs);
+    }
+
     send(packet, "lowerLayerOut");
 }
 
@@ -378,9 +423,20 @@ void EtherGPTP::sendPdelayReq()
     gptp->setOriginTimestamp(schedulePdelay);
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
-    const auto& ethernetFcs = makeShared<EthernetFcs>();
-    ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
-    packet->insertAtBack(ethernetFcs);
+
+    B paddingLength = MIN_ETHERNET_FRAME_BYTES - ETHER_FCS_BYTES - packet->getDataLength();
+    if (paddingLength > B(0)) {
+        const auto& ethPadding = makeShared<EthernetPadding>();
+        ethPadding->setChunkLength(paddingLength);
+        packet->insertAtBack(ethPadding);
+    }
+
+    if (withFcs) {
+        const auto& ethernetFcs = makeShared<EthernetFcs>();
+        ethernetFcs->setFcsMode(FcsMode::FCS_DECLARED_CORRECT);     //TODO add parameter
+        packet->insertAtBack(ethernetFcs);
+    }
+
     send(packet, "lowerLayerOut");
     transmittedTimeRequester = clockGptp->getClockTime();
 }

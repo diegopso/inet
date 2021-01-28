@@ -86,6 +86,8 @@ class EtherGPTP : public ClockUserModuleBase
     cOutVector vRateRatio;
     cOutVector vPeerDelay;
 
+    bool withFcs = true;
+
 protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;

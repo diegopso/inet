@@ -22,6 +22,7 @@ simple EtherGPTP like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is 
 
         double syncInterval @unit(s) = default(0.125s);
         double pdelayInterval @unit(s) = default(1s);
+        bool withFcs = default(true);    // add FCS for lower layer outgoing packets
     gates:
         input upperLayerIn; // @labels(EtherFrame);		// Connect to Queue if Queue exists or Encap if Queue doesn't
         output upperLayerOut; // @labels(EtherFrame); 	// Connect to Encap
