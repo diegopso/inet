@@ -16,6 +16,6 @@ module GPtpSlave extends GPtpEndstation
         networkLayer.proxyARP = default(false);
 
         // 11 - Grandmaster, 12 - Bridge, 13 - Slave
-        int gPtpNodeType = 13;
+        tableGPTP.gPtpNodeType = 13;
     connections allowunconnected:
 }

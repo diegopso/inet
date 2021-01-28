@@ -54,7 +54,7 @@ void EtherGPTP::initialize(int stage)
         stepCounter = 0;
         peerDelay= tableGptp->getPeerDelay();
         portType = par("portType");
-        nodeType = gPtpNode->par("gPtpNodeType");
+        nodeType = tableGptp->par("gPtpNodeType");
         syncInterval = par("syncInterval");
 
         rateRatio = 1;

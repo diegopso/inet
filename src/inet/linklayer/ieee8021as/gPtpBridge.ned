@@ -13,15 +13,15 @@ import inet.node.ethernet.EthernetSwitch;
 module GPtpBridge extends EthernetSwitch
 {
     parameters:
-        // 11 - Grandmaster, 12 - Bridge, 13 - Slave
-        int gPtpNodeType = 12;
         eth[*].typename = "EthernetInterfaceGPTP";
     submodules:
         tableGPTP: TableGPTP {
-            @display("p=920,100");
+            // 11 - Grandmaster, 12 - Bridge, 13 - Slave
+            gPtpNodeType = 12;
+            @display("p=100,700");
         }
         clockGPTP: Clock {
-            @display("p=100,601");
+            @display("p=100,800");
         }
 }
 

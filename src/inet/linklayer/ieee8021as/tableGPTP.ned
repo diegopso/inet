@@ -13,7 +13,8 @@ package inet.linklayer.ieee8021as;
 simple TableGPTP
 {
     parameters:
-        string nodeType = default("SlaveNode"); // MasterNode, BridgeNode and SlaveNode
+        // 11 - Grandmaster, 12 - Bridge, 13 - Slave
+        int gPtpNodeType;
         double correctionField = default(0);
         double rateRatio = default(1);
         double syncReceivedTime = default(0);
