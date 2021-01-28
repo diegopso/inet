@@ -7,10 +7,13 @@
 
 package inet.linklayer.ieee8021as;
 
+import inet.linklayer.contract.ITableGPTP;
+
+
 //
 // this will be used to store a value of correctionField and rateRatio
 //
-simple TableGPTP
+simple TableGPTP like ITableGPTP
 {
     parameters:
         // 11 - Grandmaster, 12 - Bridge, 13 - Slave
