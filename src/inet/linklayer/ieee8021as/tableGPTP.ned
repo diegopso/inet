@@ -18,7 +18,7 @@ simple TableGPTP like ITableGPTP
     parameters:
         // 11 - Grandmaster, 12 - Bridge, 13 - Slave
         int gPtpNodeType;
-        double correctionField = default(0);
-        double rateRatio = default(1);
-        double syncReceivedTime = default(0);
+        double correctionField @unit(s) = default(0s);
+        double rateRatio @unit(s) = default(1s);
+        double syncReceivedTime @unit(s) = default(0s);
 }
