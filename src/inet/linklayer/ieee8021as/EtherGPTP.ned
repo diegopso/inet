@@ -7,11 +7,14 @@
 
 package inet.linklayer.ieee8021as;
 
+import inet.protocolelement.measurement.IMeasurementLayer;
+
+
 //
 // This module is a part of EthernetInterfaceGPTP compound module and is placed between MAC and Encap/Queue
 // Time-aware switch shall have EthernetInterfaceGPTP module instead of standard WiredNIC 
 //
-simple EtherGPTP
+simple EtherGPTP like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is a kludge
 {
     parameters:
         // 0-Passive port by default. 2-Master port, 1-Slave port, 0-Passive port
