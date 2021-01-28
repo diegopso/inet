@@ -19,6 +19,8 @@ package inet.node.base;
 
 import inet.clock.contract.IClock;
 import inet.common.lifecycle.NodeStatus;
+import inet.linklayer.contract.IClockGPTP;
+import inet.linklayer.contract.ITableGPTP;
 import inet.mobility.contract.IMobility;
 import inet.node.inet.INetworkNode;
 import inet.power.contract.IEnergyGenerator;
@@ -73,6 +75,14 @@ module NodeBase like INetworkNode
         mobility: <default("")> like IMobility if typename != "" {
             parameters:
                 @display("p=125,160;is=s");
+        }
+        tableGPTP: <default("")> like ITableGPTP if typename != "" {
+            parameters:
+                @display("p=125,640;is=s");
+        }
+        clockGPTP: <default("")> like IClockGPTP if typename != "" {
+            parameters:
+                @display("p=125,720;is=s");
         }
 }
 

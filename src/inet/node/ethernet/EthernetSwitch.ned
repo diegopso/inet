@@ -24,15 +24,18 @@ import inet.common.MessageDispatcher;
 import inet.common.lifecycle.NodeStatus;
 import inet.common.packet.recorder.PcapRecorder;
 import inet.linklayer.configurator.L2NodeConfigurator;
+import inet.linklayer.contract.IClockGPTP;
 import inet.linklayer.contract.IEthernetInterface;
 import inet.linklayer.contract.IMacAddressTable;
 import inet.linklayer.contract.IMacRelayUnit;
 import inet.linklayer.contract.IPolicyLayer;
 import inet.linklayer.contract.ISpanningTree;
+import inet.linklayer.contract.ITableGPTP;
 import inet.linklayer.ethernet.contract.IEthernetEncapsulation;
 import inet.linklayer.ethernet.contract.IEthernetLayer;
 import inet.linklayer.ieee8021q.Ieee8021qLayer;
 import inet.networklayer.common.InterfaceTable;
+
 
 //
 // Model of an Ethernet switch.
@@ -123,6 +126,12 @@ module EthernetSwitch
         }
         cutthrough: MessageDispatcher if enableCutthrough {
             @display("p=800,600;b=1200,5");
+        }
+        tableGPTP: <default("")> like ITableGPTP if typename != "" {
+            @display("p=100,680;is=s");
+        }
+        clockGPTP: <default("")> like IClockGPTP if typename != "" {
+            @display("p=100,760;is=s");
         }
     connections:
         ethernet.lowerLayerOut --> li.in++ if exists(ethernet);
