@@ -21,7 +21,7 @@
 //           University of Rostock, Germany
 // 
 
-import inet.clock.contract.ClockTime;
+import inet.clock.common.ClockTime;
 import inet.common.packet.chunk.Chunk;
 
 namespace inet;
