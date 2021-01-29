@@ -17,8 +17,8 @@ simple EtherGPTP
         // 0-Passive port by default. 2-Master port, 1-Slave port, 0-Passive port
         int portType = default(0);
 
-        double syncInterval = default(0.125);
-        double pdelayInterval = default(1);
+        double syncInterval @unit(s) = default(0.125s);
+        double pdelayInterval @unit(s) = default(1s);
     gates:
         input upperLayerIn; // @labels(EtherFrame);		// Connect to Queue if Queue exists or Encap if Queue doesn't
         output upperLayerOut; // @labels(EtherFrame); 	// Connect to Encap

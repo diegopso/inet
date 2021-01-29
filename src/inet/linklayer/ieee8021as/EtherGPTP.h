@@ -8,17 +8,16 @@
 #ifndef __IEEE8021AS_ETHERGPTP_H_
 #define __IEEE8021AS_ETHERGPTP_H_
 
+#include <string>
+
 #include "gPtp.h"
 #include "gPtpPacket_m.h"
 #include "tableGPTP.h"
-#include "Clock.h"
-#include <omnetpp.h>
-#include <string>
 
-//#include "inet/linklayer/ethernet/common/EthernetMacBase.h"
+#include "inet/clock/model/SettableClock.h"
+#include "inet/common/clock/ClockUserModuleBase.h"
 #include "inet/linklayer/common/MacAddress.h"
 #include "inet/linklayer/ethernet/common/EthernetMacHeader_m.h"
-//#include "inet/linklayer/base/MacBase.h"
 #include "inet/networklayer/common/NetworkInterface.h"
 
 namespace inet {
@@ -35,61 +34,48 @@ enum gPtpPortType {
     PASSIVE_PORT = 0
 };
 
-class EtherGPTP : public cSimpleModule
+class EtherGPTP : public ClockUserModuleBase
 {
     opp_component_ptr<TableGPTP> tableGptp;
-    opp_component_ptr<Clock> clockGptp;
+    opp_component_ptr<SettableClock> clockGptp;
     NetworkInterface *nic = nullptr;
     int portType;
     int nodeType;
-    int stepCounter;
-    SimTime rateRatio;
 
     // errorTime is time difference between MAC transmition
     // or receiving time and etherGPTP time
     cMessage* requestMsg = nullptr;
 
-    SimTime receivedTimeAtHandleMessage;
-    SimTime residenceTime;
+    //clocktime_t receivedTimeAtHandleMessage;
+    //clocktime_t residenceTime;
 
-    SimTime scheduleSync;
-    SimTime schedulePdelay;
-    SimTime schedulePdelayResp;
+    clocktime_t scheduleSync;
+    clocktime_t schedulePdelay;
+    //clocktime_t schedulePdelayResp;
 
-    SimTime syncInterval;
-    SimTime pdelayInterval;
+    clocktime_t syncInterval;
+    clocktime_t pdelayInterval;
 
-    cMessage* selfMsgSync = nullptr;
-    cMessage* selfMsgFollowUp = nullptr;
-    cMessage* selfMsgDelayReq = nullptr;
-    cMessage* selfMsgDelayResp = nullptr;
+    ClockEvent* selfMsgSync = nullptr;
+    ClockEvent* selfMsgFollowUp = nullptr;
+    ClockEvent* selfMsgDelayReq = nullptr;
+    ClockEvent* selfMsgDelayResp = nullptr;
 
     /* Slave port - Variables is used for Peer Delay Measurement */
-    SimTime peerDelay;
-    SimTime receivedTimeResponder;
-    SimTime receivedTimeRequester;
-    SimTime transmittedTimeResponder;
-    SimTime transmittedTimeRequester;
+    clocktime_t peerDelay;
+    clocktime_t receivedTimeResponder;
+    clocktime_t receivedTimeRequester;
+    clocktime_t transmittedTimeResponder;
+    clocktime_t transmittedTimeRequester;
     double PDelayRespInterval;
     double FollowUpInterval;
 
-    SimTime sentTimeSyncSync;
+    clocktime_t sentTimeSyncSync;
 
     /* Slave port - Variables is used for Rate Ratio. All times are drifted based on constant drift */
-    SimTime sentTimeSync;
-    SimTime receivedTimeSyncAfterSync;
-    SimTime receivedTimeSyncBeforeSync;
-    SimTime neighborDrift;
-
-//    SimTime sentTimeAfterSync;
-//    SimTime sentTimeBeforeSync;
-//    SimTime sentTimeFollowUp;
-//    SimTime receivedTimeFollowUp;
-//    SimTime sentTimeFollowUp1;
-//    SimTime sentTimeFollowUp2;
-//    SimTime receivedTimeFollowUp1;
-//    SimTime receivedTimeFollowUp2;
-
+    // clocktime_t sentTimeSync;
+    clocktime_t receivedTimeSyncAfterSync;
+    clocktime_t receivedTimeSyncBeforeSync;
 
     /* Statistics information */
     cOutVector vLocalTime;
@@ -112,7 +98,7 @@ protected:
     void masterPort(cMessage *msg);
     void slavePort(cMessage *msg);
 
-    void sendSync(SimTime value);
+    void sendSync(clocktime_t value);
     void sendFollowUp();
     void sendPdelayReq();
     void sendPdelayResp();
@@ -125,6 +111,8 @@ protected:
     void processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp);
 
     void handleTableGptpCall(cMessage *msg);
+
+    clocktime_t getCalculatedDrift(IClock *clock, clocktime_t value) { return CLOCKTIME_ZERO; }
 };
 
 }

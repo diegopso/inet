@@ -34,72 +34,72 @@ void TableGPTP::handleGptpCall(cMessage *msg)
     delete msg;
 }
 
-void TableGPTP::setCorrectionField(SimTime cf)
+void TableGPTP::setCorrectionField(clocktime_t cf)
 {
     correctionField = cf;
 }
 
-SimTime TableGPTP::getCorrectionField()
+clocktime_t TableGPTP::getCorrectionField()
 {
     return correctionField;
 }
 
-void TableGPTP::setRateRatio(SimTime cf)
+void TableGPTP::setRateRatio(clocktime_t cf)
 {
     rateRatio = cf;
 }
 
-SimTime TableGPTP::getRateRatio()
+clocktime_t TableGPTP::getRateRatio()
 {
     return rateRatio;
 }
 
-void TableGPTP::setPeerDelay(SimTime cf)
+void TableGPTP::setPeerDelay(clocktime_t cf)
 {
     peerDelay = cf;
 }
 
-SimTime TableGPTP::getPeerDelay()
+clocktime_t TableGPTP::getPeerDelay()
 {
     return peerDelay;
 }
 
-void TableGPTP::setReceivedTimeSync(SimTime cf)
+void TableGPTP::setReceivedTimeSync(clocktime_t cf)
 {
     receivedTimeSync = cf;
 }
 
-SimTime TableGPTP::getReceivedTimeSync()
+clocktime_t TableGPTP::getReceivedTimeSync()
 {
     return receivedTimeSync;
 }
 
-void TableGPTP::setReceivedTimeFollowUp(SimTime cf)
+void TableGPTP::setReceivedTimeFollowUp(clocktime_t cf)
 {
     receivedTimeFollowUp = cf;
 }
 
-SimTime TableGPTP::getReceivedTimeFollowUp()
+clocktime_t TableGPTP::getReceivedTimeFollowUp()
 {
     return receivedTimeFollowUp;
 }
 
-void TableGPTP::setReceivedTimeAtHandleMessage(SimTime cf)
+void TableGPTP::setReceivedTimeAtHandleMessage(clocktime_t cf)
 {
     receivedTimeAtHandleMessage = cf;
 }
 
-SimTime TableGPTP::getReceivedTimeAtHandleMessage()
+clocktime_t TableGPTP::getReceivedTimeAtHandleMessage()
 {
     return receivedTimeAtHandleMessage;
 }
 
-void TableGPTP::setOriginTimestamp(SimTime cf)
+void TableGPTP::setOriginTimestamp(clocktime_t cf)
 {
     originTimestamp = cf;
 }
 
-SimTime TableGPTP::getOriginTimestamp()
+clocktime_t TableGPTP::getOriginTimestamp()
 {
     return originTimestamp;
 }

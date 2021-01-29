@@ -9,6 +9,7 @@
 #define __IEEE8021AS_TABLEGPTP_H_
 
 #include "inet/common/INETDefs.h"
+#include "inet/clock/contract/ClockTime.h"
 
 namespace inet {
 
@@ -16,25 +17,25 @@ class EtherGPTP;
 
 class TableGPTP : public cSimpleModule
 {
-    SimTime correctionField;
-    SimTime rateRatio;
-    SimTime originTimestamp;
-    SimTime peerDelay;
+    clocktime_t correctionField;
+    clocktime_t rateRatio;
+    clocktime_t originTimestamp;
+    clocktime_t peerDelay;
 
     // Below timestamps are not drifted and they are in simtime
-    SimTime receivedTimeSync;
-    SimTime receivedTimeFollowUp;
+    clocktime_t receivedTimeSync;
+    clocktime_t receivedTimeFollowUp;
 
     /* time to receive Sync message before synchronize local time with master */
-    SimTime timeBeforeSync;
+    clocktime_t timeBeforeSync;
 
     // This is used to calculate residence time within time-aware system
     // Its value has the time receiving Sync message from master port of other system
-    SimTime receivedTimeAtHandleMessage;
+    clocktime_t receivedTimeAtHandleMessage;
 
     // Adjusted time when Sync received
     // For constant drift, setTime = sentTime + delay
-    SimTime setTime;
+    clocktime_t setTime;
 
     // array of EtherGPTP modules in this node:
     std::map<int, EtherGPTP *> gptps;
@@ -43,24 +44,24 @@ class TableGPTP : public cSimpleModule
     virtual void initialize() override;
 
   public:
-    void setCorrectionField(SimTime cf);
-    void setRateRatio(SimTime cf);
-    void setPeerDelay(SimTime cf);
-    void setReceivedTimeSync(SimTime cf);
-    void setReceivedTimeFollowUp(SimTime cf);
-    void setReceivedTimeAtHandleMessage(SimTime cf);
-    void setOriginTimestamp(SimTime cf);
+    void setCorrectionField(clocktime_t cf);
+    void setRateRatio(clocktime_t cf);
+    void setPeerDelay(clocktime_t cf);
+    void setReceivedTimeSync(clocktime_t cf);
+    void setReceivedTimeFollowUp(clocktime_t cf);
+    void setReceivedTimeAtHandleMessage(clocktime_t cf);
+    void setOriginTimestamp(clocktime_t cf);
     void addGptp(EtherGPTP *gptp);
     void removeGptp(EtherGPTP *gptp);
     void handleGptpCall(cMessage *msg);
 
-    SimTime getCorrectionField();
-    SimTime getRateRatio();
-    SimTime getPeerDelay();
-    SimTime getReceivedTimeSync();
-    SimTime getReceivedTimeFollowUp();
-    SimTime getReceivedTimeAtHandleMessage();
-    SimTime getOriginTimestamp();
+    clocktime_t getCorrectionField();
+    clocktime_t getRateRatio();
+    clocktime_t getPeerDelay();
+    clocktime_t getReceivedTimeSync();
+    clocktime_t getReceivedTimeFollowUp();
+    clocktime_t getReceivedTimeAtHandleMessage();
+    clocktime_t getOriginTimestamp();
 };
 
 }

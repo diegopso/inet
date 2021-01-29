@@ -15,6 +15,6 @@ module GPtpEndstation extends StandardHost
     parameters:
         eth[*].typename = "EthernetInterfaceGPTP";
         tableGPTP.typename = "TableGPTP";
-        clockGPTP.typename = "Clock";
+        clock.typename = default("SettableClock");
 }
 

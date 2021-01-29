@@ -21,6 +21,7 @@
 //           University of Rostock, Germany
 // 
 
+import inet.clock.contract.ClockTime;
 import inet.common.packet.chunk.Chunk;
 
 namespace inet;
@@ -52,19 +53,19 @@ class GPtpSync extends GPtpBase
 {
     typeCode = GPTPTYPE_SYNC;
     chunkLength = B(GPTP_SYNC_PACKET_SIZE);
-    simtime_t sentTime;
-    simtime_t localDrift;
-    simtime_t originTimestamp;  
+    clocktime_t sentTime;
+    clocktime_t localDrift;
+    clocktime_t originTimestamp;
 }
 
 class GPtpFollowUp extends GPtpBase
 {
     typeCode = GPTPTYPE_FOLLOW_UP;
     chunkLength = B(GPTP_FOLLOW_UP_PACKET_SIZE);
-    simtime_t sentTime;
-    simtime_t preciseOriginTimestamp;
-    simtime_t correctionField;
-    simtime_t rateRatio;
+    clocktime_t sentTime;
+    clocktime_t preciseOriginTimestamp;
+    clocktime_t correctionField;
+    clocktime_t rateRatio;
     int numberOfHops;
 }
 
@@ -72,8 +73,8 @@ class GPtpPdelayReq extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_REQ;
     chunkLength = B(GPTP_PDELAY_REQ_PACKET_SIZE);
-    simtime_t sentTime;
-    simtime_t originTimestamp;
+    clocktime_t sentTime;
+    clocktime_t originTimestamp;
     int requestingPortIdentity;
 }
 
@@ -81,8 +82,8 @@ class GPtpPdelayResp extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_RESP;
     chunkLength = B(GPTP_PDELAY_RESP_PACKET_SIZE);
-    simtime_t sentTime;
-    simtime_t requestReceiptTimestamp;
+    clocktime_t sentTime;
+    clocktime_t requestReceiptTimestamp;
     int requestingPortIdentity;
 }
 
@@ -90,8 +91,8 @@ class GPtpPdelayRespFollowUp extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_RESP_FOLLOW_UP;
     chunkLength = B(GPTP_PDELAY_RESP_FOLLOW_UP_PACKET_SIZE);
-    simtime_t sentTime;
-    simtime_t responseOriginTimestamp;
+    clocktime_t sentTime;
+    clocktime_t responseOriginTimestamp;
     int requestingPortIdentity;
 }
 

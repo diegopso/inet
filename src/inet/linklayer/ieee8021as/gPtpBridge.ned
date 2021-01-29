@@ -15,7 +15,7 @@ module GPtpBridge extends EthernetSwitch
     parameters:
         eth[*].typename = "EthernetInterfaceGPTP";
         tableGPTP.typename = "TableGPTP";
-        clockGPTP.typename = "Clock";
+        clock.typename = default("SettableClock");
         // 11 - Grandmaster, 12 - Bridge, 13 - Slave
         tableGPTP.gPtpNodeType = 12;
 }
