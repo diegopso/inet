@@ -10,6 +10,7 @@
 
 #include "inet/common/INETDefs.h"
 #include "inet/clock/contract/ClockTime.h"
+#include "inet/clock/common/ClockTime.h"
 
 namespace inet {
 
