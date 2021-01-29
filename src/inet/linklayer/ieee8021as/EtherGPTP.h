@@ -19,6 +19,7 @@
 #include "inet/linklayer/common/MacAddress.h"
 #include "inet/linklayer/ethernet/common/EthernetMacHeader_m.h"
 //#include "inet/linklayer/base/MacBase.h"
+#include "inet/networklayer/common/NetworkInterface.h"
 
 namespace inet {
 
@@ -38,6 +39,7 @@ class EtherGPTP : public cSimpleModule
 {
     opp_component_ptr<TableGPTP> tableGptp;
     opp_component_ptr<Clock> clockGptp;
+    NetworkInterface *nic = nullptr;
     int portType;
     int nodeType;
     int stepCounter;

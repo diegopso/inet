@@ -50,6 +50,7 @@ void EtherGPTP::initialize(int stage)
         cModule* gPtpNode = getContainingNode(this);
         tableGptp = check_and_cast<TableGPTP *>(gPtpNode->getSubmodule("tableGPTP"));
         clockGptp = check_and_cast<Clock *>(gPtpNode->getSubmodule("clockGPTP"));
+        nic = getContainingNicModule(this);
 
         stepCounter = 0;
         peerDelay= tableGptp->getPeerDelay();
@@ -255,10 +256,9 @@ void EtherGPTP::sendFollowUp()
          * It is calculated by adding peer delay, residence time and packet transmission time      *
          * correctionField(i)=correctionField(i-1)+peerDelay+(timeReceivedSync-timeSentSync)*(1-f) *
          *******************************************************************************************/
-        double bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM) * 8;
+        int bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM) * 8;
 
-        //FIXME !!! get valid bitrate from NIC
-        SimTime packetTransmissionTime = (SimTime)bits / 100000000;   //FIXME !!! get valid bitrate from NIC
+        SimTime packetTransmissionTime = (SimTime)(bits / nic->getDatarate());
 
         gptp->setCorrectionField(tableGptp->getCorrectionField() + tableGptp->getPeerDelay() + packetTransmissionTime + sentTimeSyncSync - tableGptp->getReceivedTimeSync());
 //        gptp->setCorrectionField(tableGptp->getCorrectionField() + tableGptp->getPeerDelay() + packetTransmissionTime + clockGptp->getCurrentTime() - tableGptp->getReceivedTimeSync());
@@ -407,10 +407,9 @@ void EtherGPTP::processSync(const GPtpSync* gptp)
      * Local time is adjusted using peer delay, correction field, residence time *
      * and packet transmission time based departure time of Sync message from GM *
      *****************************************************************************/
-    double bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM + 2) * 8;
+    int bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM + 2) * 8;
 
-    //FIXME !!! get valid bitrate from NIC
-    SimTime packetTransmissionTime = (SimTime)bits / 100000000;
+    SimTime packetTransmissionTime = (SimTime)(bits / nic->getDatarate());
 
     clockGptp->adjustTime(sentTimeSync + tableGptp->getPeerDelay() + tableGptp->getCorrectionField() + residenceTime + packetTransmissionTime);
 
@@ -452,10 +451,9 @@ void EtherGPTP::processFollowUp(const GPtpFollowUp* gptp)
     /************* Time difference to Grand master *******************************************
      * Time difference before synchronize local time and after synchronization of local time *
      *****************************************************************************************/
-    double bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM + 2) * 8;
+    int bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM + 2) * 8;
 
-    //FIXME !!! get valid bitrate from NIC
-    SimTime packetTransmissionTime = (SimTime)bits / 100000000;
+    SimTime packetTransmissionTime = (SimTime)(bits / nic->getDatarate());
 
     SimTime timeDifferenceAfter  = receivedTimeSyncAfterSync - tableGptp->getOriginTimestamp() - tableGptp->getPeerDelay() - tableGptp->getCorrectionField() - packetTransmissionTime;
     SimTime timeDifferenceBefore = receivedTimeSyncBeforeSync - tableGptp->getOriginTimestamp() - tableGptp->getPeerDelay() - tableGptp->getCorrectionField() - packetTransmissionTime;
@@ -471,9 +469,8 @@ void EtherGPTP::processFollowUp(const GPtpFollowUp* gptp)
     EV_INFO << "TIME DIFFERENCE TO GM    - " << timeDifferenceAfter << endl;
     EV_INFO << "TIME DIFFERENCE TO GM BEF- " << timeDifferenceBefore << endl;
 
-//    double bits = (MAC_HEADER + FOLLOW_UP_PACKET_SIZE + CRC_CHECKSUM) * 8;
-    //FIXME !!! get valid bitrate from NIC
-//    SimTime packetTransmissionTime = (SimTime)bits / 100000000;
+//    int bits = (MAC_HEADER + FOLLOW_UP_PACKET_SIZE + CRC_CHECKSUM) * 8;
+//    SimTime packetTransmissionTime = (SimTime)(bits / nic->getDatarate());
 //    vTimeDifferenceGMafterSync.record(receivedTimeSyncAfterSync - simTime() + FollowUpInterval + packetTransmissionTime + tableGptp->getPeerDelay());
 //    vTimeDifferenceGMbeforeSync.record(receivedTimeSyncBeforeSync - simTime() + FollowUpInterval + packetTransmissionTime + tableGptp->getPeerDelay());
 }
@@ -492,10 +489,9 @@ void EtherGPTP::processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp)
      * on responder side, pdelay_resp is scheduled using PDelayRespInterval time.    *
      * PDelayRespInterval needs to be deducted as well as packet transmission time   *
      *********************************************************************************/
-    double bits = (MAC_HEADER + GPTP_PDELAY_RESP_PACKET_SIZE + CRC_CHECKSUM) * 8;
+    int bits = (MAC_HEADER + GPTP_PDELAY_RESP_PACKET_SIZE + CRC_CHECKSUM) * 8;
 
-    //FIXME !!! get valid bitrate from NIC
-    SimTime packetTransmissionTime = (SimTime)bits / 100000000;
+    SimTime packetTransmissionTime = (SimTime)(bits / nic->getDatarate());
 
     peerDelay= (tableGptp->getRateRatio().dbl()*(receivedTimeRequester.dbl() - transmittedTimeRequester.dbl()) + transmittedTimeResponder.dbl() - receivedTimeResponder.dbl())/2
             - PDelayRespInterval - packetTransmissionTime;
