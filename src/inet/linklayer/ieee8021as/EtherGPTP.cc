@@ -69,9 +69,9 @@ void EtherGPTP::initialize(int stage)
             if (NULL == selfMsgSync)
                 selfMsgSync = new ClockEvent("selfMsgSync");
 
-            scheduleSync = syncInterval + 0.01;
+            clocktime_t scheduleSync = syncInterval + 0.01;
             tableGptp->setOriginTimestamp(scheduleSync);
-            scheduleClockEventAfter(scheduleSync, selfMsgSync);    //KLUDGE CLOCKTIME_AS_SIMTIME() should be removed
+            scheduleClockEventAfter(scheduleSync, selfMsgSync);
         }
         else if(portType == SLAVE_PORT)
         {
@@ -157,7 +157,7 @@ void EtherGPTP::masterPort(cMessage *msg)
 {
     if (msg->isSelfMessage()) {
         if(selfMsgSync == msg) {
-            sendSync(scheduleSync);
+            sendSync(clockGptp->getClockTime());
 
             /* Schedule next Sync message at next sync interval
              * Grand master always works at simulation time */
@@ -420,7 +420,7 @@ void EtherGPTP::sendPdelayReq()
 
     auto gptp = makeShared<GPtpPdelayReq>();
     gptp->setSentTime(clockGptp->getClockTime());
-    gptp->setOriginTimestamp(schedulePdelay);
+    gptp->setOriginTimestamp(clockGptp->getClockTime());
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
 

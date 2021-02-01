@@ -60,7 +60,7 @@ enum gPtpPacketSize
 
 class GPtpBase extends FieldsChunk
 {
-    int typeCode;
+    gPtpMessageType typeCode;
 }
 
 class GPtpSync extends GPtpBase

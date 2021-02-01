@@ -37,7 +37,6 @@ class EtherGPTP : public ClockUserModuleBase
     //clocktime_t receivedTimeAtHandleMessage;
     //clocktime_t residenceTime;
 
-    clocktime_t scheduleSync;
     clocktime_t schedulePdelay;
     //clocktime_t schedulePdelayResp;
 
