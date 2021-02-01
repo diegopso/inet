@@ -18,7 +18,7 @@ simple EtherGPTP like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is 
 {
     parameters:
         // 0-Passive port by default. 2-Master port, 1-Slave port, 0-Passive port
-        int portType = default(0);
+        int portType = default(0);  //  @enum("gPtpPortType")
 
         double syncInterval @unit(s) = default(0.125s);
         double pdelayInterval @unit(s) = default(1s);

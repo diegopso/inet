@@ -26,6 +26,20 @@ import inet.common.packet.chunk.Chunk;
 
 namespace inet;
 
+enum gPtpNodeType
+{
+    MASTER_NODE = 11;
+    BRIDGE_NODE = 12;
+    SLAVE_NODE  = 13;
+}
+
+enum gPtpPortType
+{
+    MASTER_PORT  = 2;
+    SLAVE_PORT   = 1;
+    PASSIVE_PORT = 0;
+}
+
 enum gPtpMessageType
 {
     GPTPTYPE_SYNC    = 1010;
