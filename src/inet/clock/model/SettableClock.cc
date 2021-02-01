@@ -78,7 +78,8 @@ void SettableClock::setClockTime(clocktime_t newClockTime, bool resetOscillator)
         simtime_t currentSimTime = simTime();
         EV_DEBUG << "Setting clock time from " << oldClockTime << " to " << newClockTime << " at simtime " << currentSimTime << ".\n";
         int64_t numTicks = oscillator->computeTicksForInterval(currentSimTime - oscillator->getComputationOrigin());
-        originClockTick = floor(newClockTime / ClockTime::from(oscillator->getNominalTickLength())) - numTicks;
+        // originClockTick = floor(newClockTime / ClockTime::from(oscillator->getNominalTickLength())) - numTicks;
+        originClockTick = newClockTime.raw() / oscillator->getNominalTickLength().raw() - numTicks;
         clocktime_t newClockTime1 = getClockTime();
         ASSERT(newClockTime == getClockTime());
         clocktime_t clockDelta = newClockTime - oldClockTime;
