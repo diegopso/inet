@@ -23,7 +23,7 @@ class TableGPTP : public cSimpleModule
     clocktime_t originTimestamp;
     clocktime_t peerDelay;
 
-    // Below timestamps are not drifted and they are in simtime
+    // Below timestamps are not drifted and they are in simtime // TODO no! no! nooooo!
     clocktime_t receivedTimeSync;
     clocktime_t receivedTimeFollowUp;
 

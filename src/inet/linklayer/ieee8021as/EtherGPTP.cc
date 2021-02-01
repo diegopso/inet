@@ -92,7 +92,7 @@ void EtherGPTP::initialize(int stage)
             pdelayInterval = par("pdelayInterval");
 
             schedulePdelay = pdelayInterval;
-            scheduleClockEventAfter(schedulePdelay, selfMsgDelayReq);    //KLUDGE CLOCKTIME_AS_SIMTIME() should be removed
+            scheduleClockEventAfter(schedulePdelay, selfMsgDelayReq);
         }
     }
     if (stage == INITSTAGE_LOCAL + 1) {
@@ -103,7 +103,7 @@ void EtherGPTP::initialize(int stage)
 
 void EtherGPTP::handleMessage(cMessage *msg)
 {
-    tableGptp->setReceivedTimeAtHandleMessage(clockGptp->getClockTime());    // KLUDGE was: simTime()
+    tableGptp->setReceivedTimeAtHandleMessage(clockGptp->getClockTime());
 
     if(portType == MASTER_PORT)
     {
@@ -459,6 +459,9 @@ void EtherGPTP::processSync(const GPtpSync* gptp)
 
     receivedTimeSyncAfterSync = clockGptp->getClockTime();
     tableGptp->setReceivedTimeSync(receivedTimeSyncAfterSync);
+
+    // adjust local timestamps, too
+    transmittedTimeRequester += receivedTimeSyncAfterSync - receivedTimeSyncBeforeSync;
 
     /************** Rate ratio calculation *************************************
      * It is calculated based on interval between two successive Sync messages *
