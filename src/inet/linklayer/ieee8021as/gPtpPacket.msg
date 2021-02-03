@@ -26,21 +26,21 @@ import inet.common.packet.chunk.Chunk;
 
 namespace inet;
 
-enum gPtpNodeType
+enum GPtpNodeType
 {
     MASTER_NODE = 11;
     BRIDGE_NODE = 12;
     SLAVE_NODE  = 13;
 }
 
-enum gPtpPortType
+enum GPtpPortType
 {
     MASTER_PORT  = 2;
     SLAVE_PORT   = 1;
     PASSIVE_PORT = 0;
 }
 
-enum gPtpMessageType
+enum GPtpMessageType
 {
     GPTPTYPE_SYNC    = 1010;
     GPTPTYPE_FOLLOW_UP = 1011;
@@ -49,7 +49,7 @@ enum gPtpMessageType
     GPTPTYPE_PDELAY_RESP_FOLLOW_UP = 1013;
 }
 
-enum gPtpPacketSize
+enum GPtpPacketSize
 {
     GPTP_SYNC_PACKET_SIZE = 44;
     GPTP_FOLLOW_UP_PACKET_SIZE = 76;
@@ -60,7 +60,7 @@ enum gPtpPacketSize
 
 class GPtpBase extends FieldsChunk
 {
-    gPtpMessageType typeCode;
+    GPtpMessageType typeCode;
 }
 
 class GPtpSync extends GPtpBase

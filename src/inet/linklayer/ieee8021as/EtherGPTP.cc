@@ -50,8 +50,8 @@ void EtherGPTP::initialize(int stage)
         clockGptp = check_and_cast<SettableClock *>(gPtpNode->getSubmodule("clock"));
         nic = getContainingNicModule(this);
 
-        portType = par("portType");
-        nodeType = tableGptp->par("gPtpNodeType");
+        portType = static_cast<GPtpPortType>(cEnum::get("GPtpPortType", "inet")->resolve(par("portType")));
+        nodeType = static_cast<GPtpNodeType>(cEnum::get("GPtpNodeType", "inet")->resolve(tableGptp->par("gPtpNodeType")));
         syncInterval = par("syncInterval");
         withFcs = par("withFcs");
 

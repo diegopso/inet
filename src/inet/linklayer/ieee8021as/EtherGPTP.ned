@@ -17,9 +17,7 @@ import inet.protocolelement.measurement.IMeasurementLayer;
 simple EtherGPTP like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is a kludge
 {
     parameters:
-        // 0-Passive port by default. 2-Master port, 1-Slave port, 0-Passive port
-        int portType = default(0);  //  @enum("gPtpPortType")
-
+        string portType = default("PASSIVE_PORT");  //  @enum("GPtpPortType"): MASTER_PORT, SLAVE_PORT, PASSIVE_PORT
         double syncInterval @unit(s) = default(0.125s);
         double pdelayInterval @unit(s) = default(1s);
         bool withFcs = default(true);    // add FCS for lower layer outgoing packets

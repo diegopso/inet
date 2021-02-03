@@ -27,8 +27,8 @@ class EtherGPTP : public ClockUserModuleBase
     opp_component_ptr<TableGPTP> tableGptp;
     opp_component_ptr<SettableClock> clockGptp;
     NetworkInterface *nic = nullptr;
-    int portType;
-    int nodeType;
+    GPtpPortType portType;
+    GPtpNodeType nodeType;
 
     // errorTime is time difference between MAC transmition
     // or receiving time and etherGPTP time

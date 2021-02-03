@@ -16,8 +16,7 @@ import inet.linklayer.contract.ITableGPTP;
 simple TableGPTP like ITableGPTP
 {
     parameters:
-        // 11 - Grandmaster, 12 - Bridge, 13 - Slave
-        int gPtpNodeType; // @enum("gPtpNodeType")
+        string gPtpNodeType; // @enum("GPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
         double correctionField @unit(s) = default(0s);
         double rateRatio @unit(s) = default(1s);
         double syncReceivedTime @unit(s) = default(0s);
