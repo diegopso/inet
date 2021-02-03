@@ -198,7 +198,7 @@ void EtherGPTP::masterPort(cMessage *msg)
 
 void EtherGPTP::sendSync(clocktime_t value)
 {
-    auto packet = new Packet("gPtpPacket");
+    auto packet = new Packet("GPtpSync");
     auto frame = makeShared<EthernetMacHeader>();
     frame->setDest(MacAddress::BROADCAST_ADDRESS);
     frame->setTypeOrLength(ETHERTYPE_GPTP);
@@ -241,7 +241,7 @@ void EtherGPTP::sendSync(clocktime_t value)
 
 void EtherGPTP::sendFollowUp()
 {
-    auto packet = new Packet("gPtpPacket");
+    auto packet = new Packet("GPtpFollowUp");
     auto frame = makeShared<EthernetMacHeader>();
     frame->setDest(MacAddress::BROADCAST_ADDRESS);
     frame->setTypeOrLength(ETHERTYPE_GPTP);  // So far INET doesn't support gPTP (etherType = 0x88f7)
@@ -297,7 +297,7 @@ void EtherGPTP::processPdelayReq(const GPtpPdelayReq* gptp)
 
 void EtherGPTP::sendPdelayResp()
 {
-    auto packet = new Packet("gPtpPacket");
+    auto packet = new Packet("GPtpPdelayResp");
     auto frame = makeShared<EthernetMacHeader>();
     frame->setDest(MacAddress::BROADCAST_ADDRESS);
     frame->setTypeOrLength(ETHERTYPE_GPTP);
@@ -327,7 +327,7 @@ void EtherGPTP::sendPdelayResp()
 
 void EtherGPTP::sendPdelayRespFollowUp()
 {
-    auto packet = new Packet("gPtpPacket");
+    auto packet = new Packet("GPtpPdelayRespFollowUp");
     auto frame = makeShared<EthernetMacHeader>();
     frame->setDest(MacAddress::BROADCAST_ADDRESS);
     frame->setTypeOrLength(ETHERTYPE_GPTP);
@@ -413,7 +413,7 @@ void EtherGPTP::slavePort(cMessage *msg)
 
 void EtherGPTP::sendPdelayReq()
 {
-    auto packet = new Packet("gPtpPacket");
+    auto packet = new Packet("GPtpPdelayReq");
     auto frame = makeShared<EthernetMacHeader>();
     frame->setDest(MacAddress::BROADCAST_ADDRESS);
     frame->setTypeOrLength(ETHERTYPE_GPTP);
