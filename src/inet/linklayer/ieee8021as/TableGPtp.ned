@@ -18,6 +18,6 @@ simple TableGPtp like ITableGPtp
     parameters:
         string gPtpNodeType; // @enum("GPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
         double correctionField @unit(s) = default(0s);
-        double rateRatio @unit(s) = default(1s);
+        double rateRatio = default(1);  // initial rate ratio
         double syncReceivedTime @unit(s) = default(0s);
 }
