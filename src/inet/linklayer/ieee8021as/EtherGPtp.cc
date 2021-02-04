@@ -49,7 +49,7 @@ void EtherGPtp::initialize(int stage)
     if (stage == INITSTAGE_LOCAL) {
         cModule* gPtpNode = getContainingNode(this);
         tableGptp = check_and_cast<TableGPtp *>(gPtpNode->getSubmodule("tableGPtp"));
-        clockGptp = check_and_cast<SettableClock *>(gPtpNode->getSubmodule("clock"));
+        clockGptp = check_and_cast<SettableClock *>(clock);
         nic = getContainingNicModule(this);
 
         portType = static_cast<GPtpPortType>(cEnum::get("GPtpPortType", "inet")->resolve(par("portType")));
