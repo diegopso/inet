@@ -17,6 +17,7 @@ import inet.protocolelement.measurement.IMeasurementLayer;
 simple EtherGPtp like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is a kludge
 {
     parameters:
+        string clockModule = default(""); // relative path of a module that implements IClock; optional
         string portType = default("PASSIVE_PORT");  //  @enum("GPtpPortType"): MASTER_PORT, SLAVE_PORT, PASSIVE_PORT
         double syncInterval @unit(s) = default(0.125s);
         double pdelayInterval @unit(s) = default(1s);

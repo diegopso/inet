@@ -44,6 +44,8 @@ EtherGPtp::~EtherGPtp()
 
 void EtherGPtp::initialize(int stage)
 {
+    ClockUserModuleBase::initialize(stage);
+
     if (stage == INITSTAGE_LOCAL) {
         cModule* gPtpNode = getContainingNode(this);
         tableGptp = check_and_cast<TableGPtp *>(gPtpNode->getSubmodule("tableGPtp"));
