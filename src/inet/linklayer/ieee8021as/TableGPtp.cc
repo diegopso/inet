@@ -5,7 +5,7 @@
 //           University of Rostock, Germany
 // 
 
-#include "tableGPTP.h"
+#include "TableGPtp.h"
 
 #include "EtherGPtp.h"
 

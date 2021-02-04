@@ -7,13 +7,13 @@
 
 package inet.linklayer.ieee8021as;
 
-import inet.linklayer.contract.ITableGPTP;
+import inet.linklayer.contract.ITableGPtp;
 
 
 //
 // this will be used to store a value of correctionField and rateRatio
 //
-simple TableGPTP like ITableGPTP
+simple TableGPtp like ITableGPtp
 {
     parameters:
         string gPtpNodeType; // @enum("GPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE

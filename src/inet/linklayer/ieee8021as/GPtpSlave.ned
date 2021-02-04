@@ -14,7 +14,7 @@ module GPtpSlave extends GPtpEndstation
         string nodeType = default("SlaveNode");
         forwarding = default(false);  // disable routing by default
         networkLayer.proxyARP = default(false);
-        tableGPTP.gPtpNodeType = "SLAVE_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
+        tableGPtp.gPtpNodeType = "SLAVE_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
     connections allowunconnected:
 }
 

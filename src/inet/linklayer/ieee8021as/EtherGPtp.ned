@@ -14,7 +14,7 @@ import inet.protocolelement.measurement.IMeasurementLayer;
 // This module is a part of EthernetInterfaceGPTP compound module and is placed between MAC and Encap/Queue
 // Time-aware switch shall have EthernetInterfaceGPTP module instead of standard WiredNIC 
 //
-simple EtherGPTP like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is a kludge
+simple EtherGPtp like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is a kludge
 {
     parameters:
         string portType = default("PASSIVE_PORT");  //  @enum("GPtpPortType"): MASTER_PORT, SLAVE_PORT, PASSIVE_PORT

@@ -19,9 +19,9 @@
 #include "inet/linklayer/common/MacAddress.h"
 #include "inet/linklayer/ethernet/base/EthernetMacBase.h"
 #include "inet/linklayer/ethernet/common/EthernetMacHeader_m.h"
-#include "inet/linklayer/ieee8021as/gPtp.h"
-#include "inet/linklayer/ieee8021as/gPtpPacket_m.h"
-#include "inet/linklayer/ieee8021as/tableGPTP.h"
+#include "inet/linklayer/ieee8021as/GPtp.h"
+#include "inet/linklayer/ieee8021as/GPtpPacket_m.h"
+#include "inet/linklayer/ieee8021as/TableGPtp.h"
 
 namespace inet {
 
@@ -46,7 +46,7 @@ void EtherGPtp::initialize(int stage)
 {
     if (stage == INITSTAGE_LOCAL) {
         cModule* gPtpNode = getContainingNode(this);
-        tableGptp = check_and_cast<TableGPtp *>(gPtpNode->getSubmodule("tableGPTP"));
+        tableGptp = check_and_cast<TableGPtp *>(gPtpNode->getSubmodule("tableGPtp"));
         clockGptp = check_and_cast<SettableClock *>(gPtpNode->getSubmodule("clock"));
         nic = getContainingNicModule(this);
 

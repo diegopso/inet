@@ -29,7 +29,7 @@ import inet.linklayer.contract.IMacAddressTable;
 import inet.linklayer.contract.IMacRelayUnit;
 import inet.linklayer.contract.IPolicyLayer;
 import inet.linklayer.contract.ISpanningTree;
-import inet.linklayer.contract.ITableGPTP;
+import inet.linklayer.contract.ITableGPtp;
 import inet.linklayer.ethernet.contract.IEthernetEncapsulation;
 import inet.linklayer.ethernet.contract.IEthernetLayer;
 import inet.linklayer.ieee8021q.Ieee8021qLayer;
@@ -125,7 +125,7 @@ module EthernetSwitch
         cutthrough: MessageDispatcher if enableCutthrough {
             @display("p=800,600;b=1200,5");
         }
-        tableGPTP: <default("")> like ITableGPTP if typename != "" {
+        tableGPtp: <default("")> like ITableGPtp if typename != "" {
             @display("p=100,680;is=s");
         }
     connections:

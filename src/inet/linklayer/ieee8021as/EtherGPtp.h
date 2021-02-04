@@ -10,9 +10,9 @@
 
 #include <string>
 
-#include "gPtp.h"
-#include "gPtpPacket_m.h"
-#include "tableGPTP.h"
+#include "GPtp.h"
+#include "GPtpPacket_m.h"
+#include "TableGPtp.h"
 
 #include "inet/clock/model/SettableClock.h"
 #include "inet/common/clock/ClockUserModuleBase.h"

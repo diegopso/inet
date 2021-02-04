@@ -14,7 +14,7 @@ import inet.networklayer.common.NetworkInterface;
 import inet.queueing.contract.ITrafficConditioner;
 
 
-module EthernetInterfaceGPTP extends NetworkInterface like IEthernetInterface
+module EthernetInterfaceGPtp extends NetworkInterface like IEthernetInterface
 {
     parameters:
         @lifecycleSupport;
@@ -53,15 +53,15 @@ module EthernetInterfaceGPTP extends NetworkInterface like IEthernetInterface
                 queue.packetCapacity = default(10000);
                 @display("p=400,400");
         }
-        etherGPTP: EtherGPTP {
+        etherGPtp: EtherGPtp {
             @display("p=400,300");
         }
     connections:
-        etherGPTP.upperLayerOut --> encap.lowerLayerIn;
-        etherGPTP.upperLayerIn <-- encap.lowerLayerOut;
+        etherGPtp.upperLayerOut --> encap.lowerLayerIn;
+        etherGPtp.upperLayerIn <-- encap.lowerLayerOut;
 
-        mac.upperLayerOut --> etherGPTP.lowerLayerIn;
-        mac.upperLayerIn <-- etherGPTP.lowerLayerOut;
+        mac.upperLayerOut --> etherGPtp.lowerLayerIn;
+        mac.upperLayerIn <-- etherGPtp.lowerLayerOut;
 
         mac.phys <--> { @display("m=s"); } <--> phys;
 

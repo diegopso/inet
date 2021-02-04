@@ -15,6 +15,6 @@ module GPtpMaster extends GPtpEndstation
         forwarding = default(false);  // disable routing by default
         networkLayer.proxyARP = default(false);
 
-        tableGPTP.gPtpNodeType = "MASTER_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
+        tableGPtp.gPtpNodeType = "MASTER_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
     connections allowunconnected:
 }

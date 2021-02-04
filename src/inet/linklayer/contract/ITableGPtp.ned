@@ -20,7 +20,7 @@ package inet.linklayer.contract;
 //
 // This module interface is implemented by TableGPTP.
 //
-moduleinterface ITableGPTP
+moduleinterface ITableGPtp
 {
     parameters:
         @display("i=block/timer");
