@@ -7,13 +7,13 @@
 
 #include "tableGPTP.h"
 
-#include "EtherGPTP.h"
+#include "EtherGPtp.h"
 
 namespace inet {
 
-Define_Module(TableGPTP);
+Define_Module(TableGPtp);
 
-void TableGPTP::initialize()
+void TableGPtp::initialize()
 {
     correctionField = par("correctionField");
     rateRatio = par("rateRatio");
@@ -22,7 +22,7 @@ void TableGPTP::initialize()
     receivedTimeFollowUp = 0;
 }
 
-void TableGPTP::handleGptpCall(cMessage *msg)
+void TableGPtp::handleGptpCall(cMessage *msg)
 {
     Enter_Method("handleGptpCall");
 
@@ -34,82 +34,82 @@ void TableGPTP::handleGptpCall(cMessage *msg)
     delete msg;
 }
 
-void TableGPTP::setCorrectionField(clocktime_t cf)
+void TableGPtp::setCorrectionField(clocktime_t cf)
 {
     correctionField = cf;
 }
 
-clocktime_t TableGPTP::getCorrectionField()
+clocktime_t TableGPtp::getCorrectionField()
 {
     return correctionField;
 }
 
-void TableGPTP::setRateRatio(clocktime_t cf)
+void TableGPtp::setRateRatio(clocktime_t cf)
 {
     rateRatio = cf;
 }
 
-clocktime_t TableGPTP::getRateRatio()
+clocktime_t TableGPtp::getRateRatio()
 {
     return rateRatio;
 }
 
-void TableGPTP::setPeerDelay(clocktime_t cf)
+void TableGPtp::setPeerDelay(clocktime_t cf)
 {
     peerDelay = cf;
 }
 
-clocktime_t TableGPTP::getPeerDelay()
+clocktime_t TableGPtp::getPeerDelay()
 {
     return peerDelay;
 }
 
-void TableGPTP::setReceivedTimeSync(clocktime_t cf)
+void TableGPtp::setReceivedTimeSync(clocktime_t cf)
 {
     receivedTimeSync = cf;
 }
 
-clocktime_t TableGPTP::getReceivedTimeSync()
+clocktime_t TableGPtp::getReceivedTimeSync()
 {
     return receivedTimeSync;
 }
 
-void TableGPTP::setReceivedTimeFollowUp(clocktime_t cf)
+void TableGPtp::setReceivedTimeFollowUp(clocktime_t cf)
 {
     receivedTimeFollowUp = cf;
 }
 
-clocktime_t TableGPTP::getReceivedTimeFollowUp()
+clocktime_t TableGPtp::getReceivedTimeFollowUp()
 {
     return receivedTimeFollowUp;
 }
 
-void TableGPTP::setReceivedTimeAtHandleMessage(clocktime_t cf)
+void TableGPtp::setReceivedTimeAtHandleMessage(clocktime_t cf)
 {
     receivedTimeAtHandleMessage = cf;
 }
 
-clocktime_t TableGPTP::getReceivedTimeAtHandleMessage()
+clocktime_t TableGPtp::getReceivedTimeAtHandleMessage()
 {
     return receivedTimeAtHandleMessage;
 }
 
-void TableGPTP::setOriginTimestamp(clocktime_t cf)
+void TableGPtp::setOriginTimestamp(clocktime_t cf)
 {
     originTimestamp = cf;
 }
 
-clocktime_t TableGPTP::getOriginTimestamp()
+clocktime_t TableGPtp::getOriginTimestamp()
 {
     return originTimestamp;
 }
 
-void TableGPTP::addGptp(EtherGPTP *gptp)
+void TableGPtp::addGptp(EtherGPtp *gptp)
 {
-    gptps.insert(std::pair<int, EtherGPTP*>(gptp->getId(), gptp));
+    gptps.insert(std::pair<int, EtherGPtp*>(gptp->getId(), gptp));
 }
 
-void TableGPTP::removeGptp(EtherGPTP *gptp)
+void TableGPtp::removeGptp(EtherGPtp *gptp)
 {
     gptps.erase(gptp->getId());
 }

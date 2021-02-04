@@ -22,9 +22,9 @@
 
 namespace inet {
 
-class EtherGPTP : public ClockUserModuleBase
+class EtherGPtp : public ClockUserModuleBase
 {
-    opp_component_ptr<TableGPTP> tableGptp;
+    opp_component_ptr<TableGPtp> tableGptp;
     opp_component_ptr<SettableClock> clockGptp;
     NetworkInterface *nic = nullptr;
     GPtpPortType portType;
@@ -81,8 +81,8 @@ protected:
     virtual void handleMessage(cMessage *msg) override;
 
   public:
-    EtherGPTP();
-    virtual ~EtherGPTP();
+    EtherGPtp();
+    virtual ~EtherGPtp();
 
     void masterPort(cMessage *msg);
     void slavePort(cMessage *msg);

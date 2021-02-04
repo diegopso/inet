@@ -14,9 +14,9 @@
 
 namespace inet {
 
-class EtherGPTP;
+class EtherGPtp;
 
-class TableGPTP : public cSimpleModule
+class TableGPtp : public cSimpleModule
 {
     clocktime_t correctionField;
     clocktime_t rateRatio;
@@ -39,7 +39,7 @@ class TableGPTP : public cSimpleModule
     clocktime_t setTime;
 
     // array of EtherGPTP modules in this node:
-    std::map<int, EtherGPTP *> gptps;
+    std::map<int, EtherGPtp *> gptps;
 
   protected:
     virtual void initialize() override;
@@ -52,8 +52,8 @@ class TableGPTP : public cSimpleModule
     void setReceivedTimeFollowUp(clocktime_t cf);
     void setReceivedTimeAtHandleMessage(clocktime_t cf);
     void setOriginTimestamp(clocktime_t cf);
-    void addGptp(EtherGPTP *gptp);
-    void removeGptp(EtherGPTP *gptp);
+    void addGptp(EtherGPtp *gptp);
+    void removeGptp(EtherGPtp *gptp);
     void handleGptpCall(cMessage *msg);
 
     clocktime_t getCorrectionField();

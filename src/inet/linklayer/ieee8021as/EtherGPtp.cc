@@ -5,14 +5,14 @@
 //           University of Rostock, Germany
 // 
 
+#include "EtherGPtp.h"
+
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <utility>
-
-#include "inet/linklayer/ieee8021as/EtherGPTP.h"
 
 #include "inet/common/ModuleAccess.h"
 #include "inet/common/ModuleRef.h"
@@ -25,13 +25,13 @@
 
 namespace inet {
 
-Define_Module(EtherGPTP);
+Define_Module(EtherGPtp);
 
-EtherGPTP::EtherGPTP()
+EtherGPtp::EtherGPtp()
 {
 }
 
-EtherGPTP::~EtherGPTP()
+EtherGPtp::~EtherGPtp()
 {
     if (tableGptp)
         tableGptp->removeGptp(this);
@@ -42,11 +42,11 @@ EtherGPTP::~EtherGPTP()
     delete requestMsg;
 }
 
-void EtherGPTP::initialize(int stage)
+void EtherGPtp::initialize(int stage)
 {
     if (stage == INITSTAGE_LOCAL) {
         cModule* gPtpNode = getContainingNode(this);
-        tableGptp = check_and_cast<TableGPTP *>(gPtpNode->getSubmodule("tableGPTP"));
+        tableGptp = check_and_cast<TableGPtp *>(gPtpNode->getSubmodule("tableGPTP"));
         clockGptp = check_and_cast<SettableClock *>(gPtpNode->getSubmodule("clock"));
         nic = getContainingNicModule(this);
 
@@ -101,7 +101,7 @@ void EtherGPTP::initialize(int stage)
     }
 }
 
-void EtherGPTP::handleMessage(cMessage *msg)
+void EtherGPtp::handleMessage(cMessage *msg)
 {
     tableGptp->setReceivedTimeAtHandleMessage(clockGptp->getClockTime());
 
@@ -129,7 +129,7 @@ void EtherGPTP::handleMessage(cMessage *msg)
     }
 }
 
-void EtherGPTP::handleTableGptpCall(cMessage *msg)
+void EtherGPtp::handleTableGptpCall(cMessage *msg)
 {
     Enter_Method("handleTableGptpCall");
 
@@ -153,7 +153,7 @@ void EtherGPTP::handleTableGptpCall(cMessage *msg)
 /* Master port related functions */
 /*********************************/
 
-void EtherGPTP::masterPort(cMessage *msg)
+void EtherGPtp::masterPort(cMessage *msg)
 {
     if (msg->isSelfMessage()) {
         if(selfMsgSync == msg) {
@@ -196,7 +196,7 @@ void EtherGPTP::masterPort(cMessage *msg)
     }
 }
 
-void EtherGPTP::sendSync(clocktime_t value)
+void EtherGPtp::sendSync(clocktime_t value)
 {
     auto packet = new Packet("GPtpSync");
     auto frame = makeShared<EthernetMacHeader>();
@@ -239,7 +239,7 @@ void EtherGPTP::sendSync(clocktime_t value)
     scheduleClockEventAfter(FollowUpInterval, selfMsgFollowUp);
 }
 
-void EtherGPTP::sendFollowUp()
+void EtherGPtp::sendFollowUp()
 {
     auto packet = new Packet("GPtpFollowUp");
     auto frame = makeShared<EthernetMacHeader>();
@@ -285,7 +285,7 @@ void EtherGPTP::sendFollowUp()
     send(packet, "lowerLayerOut");
 }
 
-void EtherGPTP::processPdelayReq(const GPtpPdelayReq* gptp)
+void EtherGPtp::processPdelayReq(const GPtpPdelayReq* gptp)
 {
     receivedTimeResponder = clockGptp->getClockTime(); // simTime();
 
@@ -295,7 +295,7 @@ void EtherGPTP::processPdelayReq(const GPtpPdelayReq* gptp)
     scheduleClockEventAfter(PDelayRespInterval, selfMsgDelayResp);
 }
 
-void EtherGPTP::sendPdelayResp()
+void EtherGPtp::sendPdelayResp()
 {
     auto packet = new Packet("GPtpPdelayResp");
     auto frame = makeShared<EthernetMacHeader>();
@@ -325,7 +325,7 @@ void EtherGPTP::sendPdelayResp()
     sendPdelayRespFollowUp();
 }
 
-void EtherGPTP::sendPdelayRespFollowUp()
+void EtherGPtp::sendPdelayRespFollowUp()
 {
     auto packet = new Packet("GPtpPdelayRespFollowUp");
     auto frame = makeShared<EthernetMacHeader>();
@@ -358,7 +358,7 @@ void EtherGPTP::sendPdelayRespFollowUp()
 /* Slave port related functions */
 /********************************/
 
-void EtherGPTP::slavePort(cMessage *msg)
+void EtherGPtp::slavePort(cMessage *msg)
 {
     if (msg->isSelfMessage())
     {
@@ -411,7 +411,7 @@ void EtherGPTP::slavePort(cMessage *msg)
     }
 }
 
-void EtherGPTP::sendPdelayReq()
+void EtherGPtp::sendPdelayReq()
 {
     auto packet = new Packet("GPtpPdelayReq");
     auto frame = makeShared<EthernetMacHeader>();
@@ -441,7 +441,7 @@ void EtherGPTP::sendPdelayReq()
     transmittedTimeRequester = clockGptp->getClockTime();
 }
 
-void EtherGPTP::processSync(const GPtpSync* gptp)
+void EtherGPtp::processSync(const GPtpSync* gptp)
 {
     clocktime_t sentTimeSync = gptp->getOriginTimestamp();
     clocktime_t residenceTime = clockGptp->getClockTime() - tableGptp->getReceivedTimeAtHandleMessage();
@@ -489,7 +489,7 @@ void EtherGPTP::processSync(const GPtpSync* gptp)
     vTimeDifference.record(CLOCKTIME_AS_SIMTIME(receivedTimeSyncBeforeSync - sentTimeSync - tableGptp->getPeerDelay()));
 }
 
-void EtherGPTP::processFollowUp(const GPtpFollowUp* gptp)
+void EtherGPtp::processFollowUp(const GPtpFollowUp* gptp)
 {
     tableGptp->setReceivedTimeFollowUp(clockGptp->getClockTime());
     tableGptp->setOriginTimestamp(gptp->getPreciseOriginTimestamp());
@@ -522,14 +522,14 @@ void EtherGPTP::processFollowUp(const GPtpFollowUp* gptp)
 //    vTimeDifferenceGMbeforeSync.record(receivedTimeSyncBeforeSync - simTime() + FollowUpInterval + packetTransmissionTime + tableGptp->getPeerDelay());
 }
 
-void EtherGPTP::processPdelayResp(const GPtpPdelayResp* gptp)
+void EtherGPtp::processPdelayResp(const GPtpPdelayResp* gptp)
 {
     receivedTimeRequester = clockGptp->getClockTime();        // simTime();
     receivedTimeResponder = gptp->getRequestReceiptTimestamp();
     transmittedTimeResponder = gptp->getSentTime();
 }
 
-void EtherGPTP::processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp)
+void EtherGPtp::processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp)
 {
     /************* Peer delay measurement ********************************************
      * It doesn't contain packet transmission time which is equal to (byte/datarate) *
