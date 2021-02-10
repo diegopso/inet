@@ -57,11 +57,8 @@ void EtherGPtp::initialize(int stage)
         syncInterval = par("syncInterval");
         withFcs = par("withFcs");
 
-        /* following parameters are used to schedule follow_up and pdelay_resp messages.
-         * These numbers must be enough large to prevent creating queue in MAC layer.
-         * It means it should be large than transmission time of message sent before */
-        PDelayRespInterval = 0.000008;
-        FollowUpInterval = 0.000007;
+        pDelayRespInterval = par("pDelayRespInterval");
+        followUpInterval = par("followUpInterval");
 
         /* Only grandmaster in the domain can initialize the synchronization message periodically
          * so below condition checks whether it is grandmaster and then schedule first sync message */
@@ -238,7 +235,7 @@ void EtherGPtp::sendSync(clocktime_t value)
 
     if (NULL == selfMsgFollowUp)
         selfMsgFollowUp = new ClockEvent("selfMsgFollowUp");
-    scheduleClockEventAfter(FollowUpInterval, selfMsgFollowUp);
+    scheduleClockEventAfter(followUpInterval, selfMsgFollowUp);
 }
 
 void EtherGPtp::sendFollowUp()
@@ -294,7 +291,7 @@ void EtherGPtp::processPdelayReq(const GPtpPdelayReq* gptp)
     if (NULL == selfMsgDelayResp)
         selfMsgDelayResp = new ClockEvent("selfMsgPdelayResp");
 
-    scheduleClockEventAfter(PDelayRespInterval, selfMsgDelayResp);
+    scheduleClockEventAfter(pDelayRespInterval, selfMsgDelayResp);
 }
 
 void EtherGPtp::sendPdelayResp()
@@ -336,7 +333,7 @@ void EtherGPtp::sendPdelayRespFollowUp()
 
     auto gptp = makeShared<GPtpPdelayRespFollowUp>();
     gptp->setSentTime(clockGptp->getClockTime());    //  simTime()
-    gptp->setResponseOriginTimestamp(receivedTimeResponder + (clocktime_t)PDelayRespInterval);
+    gptp->setResponseOriginTimestamp(receivedTimeResponder + (clocktime_t)pDelayRespInterval);
     packet->insertAtFront(gptp);
     packet->insertAtFront(frame);
 
@@ -500,7 +497,7 @@ void EtherGPtp::processFollowUp(const GPtpFollowUp* gptp)
     /************* Time difference to Grand master *******************************************
      * Time difference before synchronize local time and after synchronization of local time *
      *****************************************************************************************/
-    int bits = (MAC_HEADER + GPTP_SYNC_PACKET_SIZE + CRC_CHECKSUM + 2) * 8;
+    int bits = b(ETHERNET_PHY_HEADER_LEN + ETHER_MAC_HEADER_BYTES + GPTP_SYNC_PACKET_SIZE + ETHER_FCS_BYTES + B(2)).get();
 
     clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
 
@@ -543,7 +540,7 @@ void EtherGPtp::processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp)
     clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
 
     peerDelay = (tableGptp->getRateRatio().dbl() * (receivedTimeRequester.dbl() - transmittedTimeRequester.dbl()) + transmittedTimeResponder.dbl() - receivedTimeResponder.dbl()) / 2
-            - PDelayRespInterval - packetTransmissionTime;
+            - pDelayRespInterval - packetTransmissionTime;
 
     EV_INFO << "transmittedTimeRequester - " << transmittedTimeRequester << endl;
     EV_INFO << "transmittedTimeResponder - " << transmittedTimeResponder << endl;

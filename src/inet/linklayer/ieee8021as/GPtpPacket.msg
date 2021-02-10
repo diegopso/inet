@@ -24,6 +24,20 @@
 import inet.clock.common.ClockTime;
 import inet.common.packet.chunk.Chunk;
 
+cplusplus {{
+#include "inet/common/Units.h"
+
+namespace inet {
+using namespace inet::units::values;
+const B GPTP_SYNC_PACKET_SIZE = B(44);
+const B GPTP_FOLLOW_UP_PACKET_SIZE = B(76);
+const B GPTP_PDELAY_REQ_PACKET_SIZE = B(54);
+const B GPTP_PDELAY_RESP_PACKET_SIZE = B(54);
+const B GPTP_PDELAY_RESP_FOLLOW_UP_PACKET_SIZE = B(54);
+}
+
+}}
+
 namespace inet;
 
 enum GPtpNodeType
@@ -49,15 +63,6 @@ enum GPtpMessageType
     GPTPTYPE_PDELAY_RESP_FOLLOW_UP = 1013;
 }
 
-enum GPtpPacketSize
-{
-    GPTP_SYNC_PACKET_SIZE = 44;
-    GPTP_FOLLOW_UP_PACKET_SIZE = 76;
-    GPTP_PDELAY_REQ_PACKET_SIZE = 54;
-    GPTP_PDELAY_RESP_PACKET_SIZE = 54;
-    GPTP_PDELAY_RESP_FOLLOW_UP_PACKET_SIZE = 54;
-}
-
 class GPtpBase extends FieldsChunk
 {
     GPtpMessageType typeCode;
@@ -66,7 +71,7 @@ class GPtpBase extends FieldsChunk
 class GPtpSync extends GPtpBase
 {
     typeCode = GPTPTYPE_SYNC;
-    chunkLength = B(GPTP_SYNC_PACKET_SIZE);
+    chunkLength = GPTP_SYNC_PACKET_SIZE;
     clocktime_t sentTime;
     clocktime_t localDrift;
     clocktime_t originTimestamp;
@@ -75,7 +80,7 @@ class GPtpSync extends GPtpBase
 class GPtpFollowUp extends GPtpBase
 {
     typeCode = GPTPTYPE_FOLLOW_UP;
-    chunkLength = B(GPTP_FOLLOW_UP_PACKET_SIZE);
+    chunkLength = GPTP_FOLLOW_UP_PACKET_SIZE;
     clocktime_t sentTime;
     clocktime_t preciseOriginTimestamp;
     clocktime_t correctionField;
@@ -86,7 +91,7 @@ class GPtpFollowUp extends GPtpBase
 class GPtpPdelayReq extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_REQ;
-    chunkLength = B(GPTP_PDELAY_REQ_PACKET_SIZE);
+    chunkLength = GPTP_PDELAY_REQ_PACKET_SIZE;
     clocktime_t sentTime;
     clocktime_t originTimestamp;
     int requestingPortIdentity;
@@ -95,7 +100,7 @@ class GPtpPdelayReq extends GPtpBase
 class GPtpPdelayResp extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_RESP;
-    chunkLength = B(GPTP_PDELAY_RESP_PACKET_SIZE);
+    chunkLength = GPTP_PDELAY_RESP_PACKET_SIZE;
     clocktime_t sentTime;
     clocktime_t requestReceiptTimestamp;
     int requestingPortIdentity;
@@ -104,7 +109,7 @@ class GPtpPdelayResp extends GPtpBase
 class GPtpPdelayRespFollowUp extends GPtpBase
 {
     typeCode = GPTPTYPE_PDELAY_RESP_FOLLOW_UP;
-    chunkLength = B(GPTP_PDELAY_RESP_FOLLOW_UP_PACKET_SIZE);
+    chunkLength = GPTP_PDELAY_RESP_FOLLOW_UP_PACKET_SIZE;
     clocktime_t sentTime;
     clocktime_t responseOriginTimestamp;
     int requestingPortIdentity;

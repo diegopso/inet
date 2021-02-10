@@ -54,8 +54,8 @@ class EtherGPtp : public ClockUserModuleBase
     clocktime_t receivedTimeRequester;
     clocktime_t transmittedTimeResponder;
     clocktime_t transmittedTimeRequester;   // sending time of last GPtpPdelayReq
-    double PDelayRespInterval;
-    double FollowUpInterval;
+    double pDelayRespInterval;
+    double followUpInterval;
 
     clocktime_t sentTimeSyncSync;
 

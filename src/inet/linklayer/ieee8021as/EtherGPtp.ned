@@ -21,6 +21,13 @@ simple EtherGPtp like IMeasurementLayer     // KLUDGE: the IMeasurementLayer is 
         string portType = default("PASSIVE_PORT");  //  @enum("GPtpPortType"): MASTER_PORT, SLAVE_PORT, PASSIVE_PORT
         double syncInterval @unit(s) = default(0.125s);
         double pdelayInterval @unit(s) = default(1s);
+ 
+        // following parameters are used to schedule follow_up and pdelay_resp messages.
+        // These numbers must be enough large to prevent creating queue in MAC layer.
+        // It means it should be large than transmission time of message sent before
+        double pDelayRespInterval @unit(s) = default(8us);
+        double followUpInterval @unit(s) = default(7us);
+ 
         bool withFcs = default(true);    // add FCS for lower layer outgoing packets
     gates:
         input upperLayerIn; // @labels(EtherFrame);		// Connect to Queue if Queue exists or Encap if Queue doesn't
