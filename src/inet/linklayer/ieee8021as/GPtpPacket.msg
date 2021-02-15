@@ -21,8 +21,10 @@
 //           University of Rostock, Germany
 // 
 
+import inet.clock.common.ClockEvent;
 import inet.clock.common.ClockTime;
 import inet.common.packet.chunk.Chunk;
+import inet.common.packet.Packet;
 
 cplusplus {{
 #include "inet/common/Units.h"
@@ -63,9 +65,16 @@ enum GPtpMessageType
     GPTPTYPE_PDELAY_RESP_FOLLOW_UP = 1013;
 }
 
+class GPtpReqAnswerEvent extends ClockEvent
+{
+    Packet *pk @owned;
+}
+
 class GPtpBase extends FieldsChunk
 {
     GPtpMessageType typeCode;
+    clocktime_t egressTimestamp;
+    clocktime_t ingressTimestamp;
 }
 
 class GPtpSync extends GPtpBase

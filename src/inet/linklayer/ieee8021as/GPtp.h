@@ -5,8 +5,8 @@
 //           University of Rostock, Germany
 // 
 
-#ifndef __IEEE8021AS_TABLEGPTP_H_
-#define __IEEE8021AS_TABLEGPTP_H_
+#ifndef __IEEE8021AS_GPTP_H_
+#define __IEEE8021AS_GPTP_H_
 
 #include "inet/clock/contract/ClockTime.h"
 #include "inet/clock/common/ClockTime.h"
@@ -25,7 +25,6 @@ class GPtp : public ClockUserModuleBase
 {
     //parameters:
     IInterfaceTable *interfaceTable = nullptr;
-    opp_component_ptr<SettableClock> clockGptp;
 
     GPtpNodeType gPtpNodeType;
     int slavePortId = -1; // interface ID of slave port
@@ -34,7 +33,6 @@ class GPtp : public ClockUserModuleBase
     clocktime_t rateRatio;
 
     clocktime_t originTimestamp;
-    clocktime_t peerDelay;
 
     // Below timestamps are not drifted and they are in simtime // TODO no! no! nooooo!
     clocktime_t receivedTimeSync;
@@ -55,10 +53,21 @@ class GPtp : public ClockUserModuleBase
     clocktime_t syncInterval;
     clocktime_t pdelayInterval;
 
+    /* Slave port - Variables is used for Peer Delay Measurement */
+    clocktime_t peerDelay;
+    clocktime_t receivedTimeResponder;
+    clocktime_t receivedTimeRequester;
+    clocktime_t transmittedTimeResponder;
+    clocktime_t transmittedTimeRequester;   // sending time of last GPtpPdelayReq
     double pDelayRespInterval;
     double followUpInterval;
 
     clocktime_t sentTimeSyncSync;
+
+    /* Slave port - Variables is used for Rate Ratio. All times are drifted based on constant drift */
+    // clocktime_t sentTimeSync;
+    clocktime_t receivedTimeSyncAfterSync;
+    clocktime_t receivedTimeSyncBeforeSync;
 
     // self timers:
     ClockEvent* selfMsgSync = nullptr;
@@ -67,7 +76,16 @@ class GPtp : public ClockUserModuleBase
     ClockEvent* selfMsgDelayResp = nullptr;
     ClockEvent* requestMsg = nullptr;
 
-  protected:
+    // Statistics information: // TODO remove, and replace with emit() calls
+    cOutVector vLocalTime;
+    cOutVector vMasterTime;
+    cOutVector vTimeDifference;
+    cOutVector vTimeDifferenceGMafterSync;
+    cOutVector vTimeDifferenceGMbeforeSync;
+    cOutVector vRateRatio;
+    cOutVector vPeerDelay;
+
+protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;
     virtual void handleMessage(cMessage *msg) override;

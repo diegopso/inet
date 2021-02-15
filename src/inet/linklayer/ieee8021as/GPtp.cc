@@ -12,6 +12,8 @@
 #include "inet/common/IProtocolRegistrationListener.h"
 #include "inet/linklayer/common/InterfaceTag_m.h"
 #include "inet/linklayer/common/MacAddressTag_m.h"
+#include "inet/linklayer/ethernet/common/Ethernet.h"
+#include "inet/physicallayer/wired/ethernet/EthernetPhyHeader_m.h"
 
 namespace inet {
 
@@ -23,47 +25,11 @@ void GPtp::initialize(int stage)
 
     if (stage == INITSTAGE_LOCAL) {
         cModule* gPtpNode = getContainingNode(this);
-        clockGptp = check_and_cast<SettableClock *>(clock);
-
         gPtpNodeType = static_cast<GPtpNodeType>(cEnum::get("GPtpNodeType", "inet")->resolve(par("gPtpNodeType")));
         syncInterval = par("syncInterval");
-        withFcs = par("withFcs");
-
         pDelayRespInterval = par("pDelayRespInterval");
         followUpInterval = par("followUpInterval");
 
-        /* Only grandmaster in the domain can initialize the synchronization message periodically
-         * so below condition checks whether it is grandmaster and then schedule first sync message */
-        if(portType == MASTER_PORT && nodeType == MASTER_NODE)
-        {
-            // Schedule Sync message to be sent
-            if (NULL == selfMsgSync)
-                selfMsgSync = new ClockEvent("selfMsgSync");
-
-            clocktime_t scheduleSync = syncInterval + 0.01;
-            this->setOriginTimestamp(scheduleSync);
-            scheduleClockEventAfter(scheduleSync, selfMsgSync);
-        }
-        else if(portType == SLAVE_PORT)
-        {
-            vLocalTime.setName("Clock local");
-            vMasterTime.setName("Clock master");
-            vTimeDifference.setName("Clock difference to neighbor");
-            vRateRatio.setName("Rate ratio");
-            vPeerDelay.setName("Peer delay");
-            vTimeDifferenceGMafterSync.setName("Clock difference to GM after Sync");
-            vTimeDifferenceGMbeforeSync.setName("Clock difference to GM before Sync");
-
-            requestMsg = new ClockEvent("requestToSendSync");
-
-            // Schedule Pdelay_Req message is sent by slave port
-            // without depending on node type which is grandmaster or bridge
-            selfMsgDelayReq = new ClockEvent("selfMsgPdelay");
-            pdelayInterval = par("pdelayInterval");
-
-            schedulePdelay = pdelayInterval;
-            scheduleClockEventAfter(schedulePdelay, selfMsgDelayReq);
-        }
     }
     if (stage == INITSTAGE_LINK_LAYER) {
         peerDelay = 0;
@@ -71,8 +37,6 @@ void GPtp::initialize(int stage)
         receivedTimeFollowUp = 0;
 
         interfaceTable = getModuleFromPar<IInterfaceTable>(par("interfaceTableModule"), this);
-
-        gPtpNodeType = static_cast<GPtpNodeType>(cEnum::get("GPtpNodeType", "inet")->resolve(par("gPtpNodeType")));
 
         const char *str = par("slavePort");
         if (*str) {
@@ -101,6 +65,38 @@ void GPtp::initialize(int stage)
         selfMsgFollowUp = new ClockEvent("selfMsgFollowUp");
 
         registerProtocol(Protocol::gptp, gate("socketOut"), gate("socketIn"));
+
+        /* Only grandmaster in the domain can initialize the synchronization message periodically
+         * so below condition checks whether it is grandmaster and then schedule first sync message */
+        if(gPtpNodeType == MASTER_NODE)
+        {
+            // Schedule Sync message to be sent
+            selfMsgSync = new ClockEvent("selfMsgSync");
+
+            clocktime_t scheduleSync = syncInterval + 0.01;
+            this->setOriginTimestamp(scheduleSync);
+            scheduleClockEventAfter(scheduleSync, selfMsgSync);
+        }
+        if(slavePortId != -1)
+        {
+            vLocalTime.setName("Clock local");
+            vMasterTime.setName("Clock master");
+            vTimeDifference.setName("Clock difference to neighbor");
+            vRateRatio.setName("Rate ratio");
+            vPeerDelay.setName("Peer delay");
+            vTimeDifferenceGMafterSync.setName("Clock difference to GM after Sync");
+            vTimeDifferenceGMbeforeSync.setName("Clock difference to GM before Sync");
+
+            requestMsg = new ClockEvent("requestToSendSync");
+
+            // Schedule Pdelay_Req message is sent by slave port
+            // without depending on node type which is grandmaster or bridge
+            selfMsgDelayReq = new ClockEvent("selfMsgPdelay");
+            pdelayInterval = par("pdelayInterval");
+
+            schedulePdelay = pdelayInterval;
+            scheduleClockEventAfter(schedulePdelay, selfMsgDelayReq);
+        }
     }
 }
 
@@ -109,7 +105,7 @@ void GPtp::handleMessage(cMessage *msg)
     if (msg->isSelfMessage()) {
         // masterport:
         if(selfMsgSync == msg) {
-            sendSync(clockGptp->getClockTime());
+            sendSync(clock->getClockTime());
 
             /* Schedule next Sync message at next sync interval
              * Grand master always works at simulation time */
@@ -148,7 +144,7 @@ void GPtp::handleMessage(cMessage *msg)
                     // Send a request to send Sync message
                     // through other gPtp Ethernet interfaces
                     if(gPtpNodeType == BRIDGE_NODE)
-                        sendSync(clockGptp->getClockTime());
+                        sendSync(clock->getClockTime());
                     delete msg;
                     break;
                 case GPTPTYPE_PDELAY_RESP:
@@ -277,8 +273,8 @@ void GPtp::sendSync(clocktime_t value)
         gptp->setOriginTimestamp(getOriginTimestamp());
     }
 
-    gptp->setLocalDrift(getCalculatedDrift(clockGptp, syncInterval));
-    sentTimeSyncSync = clockGptp->getClockTime();
+    gptp->setLocalDrift(getCalculatedDrift(clock, syncInterval));
+    sentTimeSyncSync = clock->getClockTime();
     gptp->setSentTime(sentTimeSyncSync);
     packet->insertAtFront(gptp);
 
@@ -294,12 +290,12 @@ void GPtp::sendFollowUp()
     auto packet = new Packet("GPtpFollowUp");
     packet->addTag<MacAddressReq>()->setDestAddress(MacAddress::BROADCAST_ADDRESS);
     auto gptp = makeShared<GPtpFollowUp>();
-    gptp->setSentTime(clockGptp->getClockTime());
+    gptp->setSentTime(clock->getClockTime());
     gptp->setPreciseOriginTimestamp(this->getOriginTimestamp());
 
-    if (nodeType == MASTER_NODE)
+    if (gPtpNodeType == MASTER_NODE)
         gptp->setCorrectionField(0);
-    else if (nodeType == BRIDGE_NODE)
+    else if (gPtpNodeType == BRIDGE_NODE)
     {
         /**************** Correction field calculation *********************************************
          * It is calculated by adding peer delay, residence time and packet transmission time      *
@@ -325,22 +321,163 @@ void GPtp::sendPdelayResp(int portId)
     auto packet = new Packet("GPtpPdelayResp");
     packet->addTag<MacAddressReq>()->setDestAddress(MacAddress::BROADCAST_ADDRESS);
     auto gptp = makeShared<GPtpPdelayResp>();
-    gptp->setSentTime(clockGptp->getClockTime());
+    gptp->setSentTime(clock->getClockTime());
     gptp->setRequestReceiptTimestamp(receivedTimeResponder);
     packet->insertAtFront(gptp);
     sendPacketToNIC(packet, portId);
     sendPdelayRespFollowUp(portId);   //FIXME!!!
 }
 
-void EtherGPtp::sendPdelayRespFollowUp(int portId)
+void GPtp::sendPdelayRespFollowUp(int portId)
 {
     auto packet = new Packet("GPtpPdelayRespFollowUp");
     packet->addTag<MacAddressReq>()->setDestAddress(MacAddress::BROADCAST_ADDRESS);
     auto gptp = makeShared<GPtpPdelayRespFollowUp>();
-    gptp->setSentTime(clockGptp->getClockTime());
+    gptp->setSentTime(clock->getClockTime());
     gptp->setResponseOriginTimestamp(receivedTimeResponder + (clocktime_t)pDelayRespInterval);
     packet->insertAtFront(gptp);
     sendPacketToNIC(packet, portId);
+}
+
+void GPtp::sendPdelayReq()
+{
+    auto packet = new Packet("GPtpPdelayReq");
+    packet->addTag<MacAddressReq>()->setDestAddress(MacAddress::BROADCAST_ADDRESS);
+    auto gptp = makeShared<GPtpPdelayReq>();
+    gptp->setSentTime(clock->getClockTime());
+    gptp->setOriginTimestamp(clock->getClockTime());
+    packet->insertAtFront(gptp);
+    ASSERT(slavePortId != -1);
+    sendPacketToNIC(packet, slavePortId);
+    transmittedTimeRequester = clock->getClockTime();
+}
+
+void GPtp::processSync(const GPtpSync* gptp)
+{
+    clocktime_t sentTimeSync = gptp->getOriginTimestamp();
+    clocktime_t residenceTime = clock->getClockTime() - this->getReceivedTimeAtHandleMessage();
+    receivedTimeSyncBeforeSync = clock->getClockTime();
+
+    /************** Time synchronization *****************************************
+     * Local time is adjusted using peer delay, correction field, residence time *
+     * and packet transmission time based departure time of Sync message from GM *
+     *****************************************************************************/
+    int bits = b(ETHERNET_PHY_HEADER_LEN + ETHER_MAC_HEADER_BYTES + GPTP_SYNC_PACKET_SIZE + ETHER_FCS_BYTES + B(2)).get();
+
+    clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
+
+    check_and_cast<SettableClock *>(clock)->setClockTime(sentTimeSync + this->getPeerDelay() + this->getCorrectionField() + residenceTime + packetTransmissionTime);
+
+    receivedTimeSyncAfterSync = clock->getClockTime();
+    this->setReceivedTimeSync(receivedTimeSyncAfterSync);
+
+    // adjust local timestamps, too
+    transmittedTimeRequester += receivedTimeSyncAfterSync - receivedTimeSyncBeforeSync;
+
+    /************** Rate ratio calculation *************************************
+     * It is calculated based on interval between two successive Sync messages *
+     ***************************************************************************/
+    clocktime_t neighborDrift = gptp->getLocalDrift();
+    clocktime_t rateRatio = (neighborDrift + syncInterval)/(getCalculatedDrift(clock, syncInterval) + syncInterval);
+
+    EV_INFO << "############## SYNC #####################################"<< endl;
+    EV_INFO << "RECEIVED TIME AFTER SYNC - " << receivedTimeSyncAfterSync << endl;
+    EV_INFO << "RECEIVED SIM TIME        - " << simTime() << endl;
+    EV_INFO << "ORIGIN TIME SYNC         - " << sentTimeSync << endl;
+    EV_INFO << "RESIDENCE TIME           - " << residenceTime << endl;
+    EV_INFO << "CORRECTION FIELD         - " << this->getCorrectionField() << endl;
+    EV_INFO << "PROPAGATION DELAY        - " << this->getPeerDelay() << endl;
+    EV_INFO << "TRANSMISSION TIME        - " << packetTransmissionTime << endl;
+
+    // Transmission time of 2 more bytes is going here
+    // in mac layer? or in our implementation?
+    EV_INFO << "TIME DIFFERENCE TO STIME - " << receivedTimeSyncAfterSync - clock->getClockTime() << endl;
+
+    this->setRateRatio(rateRatio);
+    vRateRatio.record(CLOCKTIME_AS_SIMTIME(rateRatio));
+    vLocalTime.record(CLOCKTIME_AS_SIMTIME(receivedTimeSyncAfterSync));
+    vMasterTime.record(CLOCKTIME_AS_SIMTIME(sentTimeSync));
+    vTimeDifference.record(CLOCKTIME_AS_SIMTIME(receivedTimeSyncBeforeSync - sentTimeSync - this->getPeerDelay()));
+}
+
+void GPtp::processFollowUp(const GPtpFollowUp* gptp)
+{
+    this->setReceivedTimeFollowUp(clock->getClockTime());
+    this->setOriginTimestamp(gptp->getPreciseOriginTimestamp());
+    this->setCorrectionField(gptp->getCorrectionField());
+
+    /************* Time difference to Grand master *******************************************
+     * Time difference before synchronize local time and after synchronization of local time *
+     *****************************************************************************************/
+    int bits = b(ETHERNET_PHY_HEADER_LEN + ETHER_MAC_HEADER_BYTES + GPTP_FOLLOW_UP_PACKET_SIZE + ETHER_FCS_BYTES + B(2)).get();
+
+    clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
+
+    clocktime_t timeDifferenceAfter  = receivedTimeSyncAfterSync - this->getOriginTimestamp() - this->getPeerDelay() - this->getCorrectionField() - packetTransmissionTime;
+    clocktime_t timeDifferenceBefore = receivedTimeSyncBeforeSync - this->getOriginTimestamp() - this->getPeerDelay() - this->getCorrectionField() - packetTransmissionTime;
+    vTimeDifferenceGMafterSync.record(CLOCKTIME_AS_SIMTIME(timeDifferenceAfter));
+    vTimeDifferenceGMbeforeSync.record(CLOCKTIME_AS_SIMTIME(timeDifferenceBefore));
+
+    EV_INFO << "############## FOLLOW_UP ################################"<< endl;
+    EV_INFO << "RECEIVED TIME AFTER SYNC - " << receivedTimeSyncAfterSync << endl;
+    EV_INFO << "ORIGIN TIME SYNC         - " << this->getOriginTimestamp() << endl;
+    EV_INFO << "CORRECTION FIELD         - " << this->getCorrectionField() << endl;
+    EV_INFO << "PROPAGATION DELAY        - " << this->getPeerDelay() << endl;
+    EV_INFO << "TRANSMISSION TIME        - " << packetTransmissionTime << endl;
+    EV_INFO << "TIME DIFFERENCE TO GM    - " << timeDifferenceAfter << endl;
+    EV_INFO << "TIME DIFFERENCE TO GM BEF- " << timeDifferenceBefore << endl;
+
+//    int bits = (MAC_HEADER + FOLLOW_UP_PACKET_SIZE + CRC_CHECKSUM) * 8;
+//    clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
+//    vTimeDifferenceGMafterSync.record(receivedTimeSyncAfterSync - simTime() + FollowUpInterval + packetTransmissionTime + this->getPeerDelay());
+//    vTimeDifferenceGMbeforeSync.record(receivedTimeSyncBeforeSync - simTime() + FollowUpInterval + packetTransmissionTime + this->getPeerDelay());
+}
+
+void GPtp::processPdelayReq(const GPtpPdelayReq* gptp)
+{
+    receivedTimeResponder = clockGptp->getClockTime();
+    // TODO make outgoing packet, fill it, and schedule it
+
+    if (NULL == selfMsgDelayResp)
+        selfMsgDelayResp = new ClockEvent("selfMsgPdelayResp");
+
+    scheduleClockEventAfter(pDelayRespInterval, selfMsgDelayResp);
+}
+
+void GPtp::processPdelayResp(const GPtpPdelayResp* gptp)
+{
+    receivedTimeRequester = clock->getClockTime();
+    receivedTimeResponder = gptp->getRequestReceiptTimestamp();
+    transmittedTimeResponder = gptp->getSentTime();
+}
+
+void GPtp::processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp)
+{
+    /************* Peer delay measurement ********************************************
+     * It doesn't contain packet transmission time which is equal to (byte/datarate) *
+     * on responder side, pdelay_resp is scheduled using PDelayRespInterval time.    *
+     * PDelayRespInterval needs to be deducted as well as packet transmission time   *
+     *********************************************************************************/
+    int bits = b(ETHERNET_PHY_HEADER_LEN + ETHER_MAC_HEADER_BYTES + GPTP_PDELAY_RESP_PACKET_SIZE + ETHER_FCS_BYTES).get();
+
+    clocktime_t packetTransmissionTime = (clocktime_t)(bits / nic->getDatarate());
+
+    // TODO: names: peerDelayInitiator, peerDelayResponder
+    //peerDelay = (this->getRateRatio().dbl() * (receivedTimeRequester.dbl() - transmittedTimeRequester.dbl()) - (transmittedTimeResponder.dbl() - receivedTimeResponder.dbl())) / 2
+    //        - pDelayRespInterval - packetTransmissionTime;
+    // TODO: peerDelay --> propagationDelay
+    peerDelay = (this->getRateRatio().dbl() * (receivedTimeRequester.dbl() - transmittedTimeRequester.dbl()) + transmittedTimeResponder.dbl() - receivedTimeResponder.dbl()) / 2
+            - pDelayRespInterval - packetTransmissionTime;
+
+    EV_INFO << "transmittedTimeRequester - " << transmittedTimeRequester << endl;
+    EV_INFO << "transmittedTimeResponder - " << transmittedTimeResponder << endl;
+    EV_INFO << "receivedTimeRequester    - " << receivedTimeRequester << endl;
+    EV_INFO << "receivedTimeResponder    - " << receivedTimeResponder << endl;
+    EV_INFO << "packetTransmissionTime   - " << packetTransmissionTime << endl;
+    EV_INFO << "PEER DELAY               - " << peerDelay << endl;
+
+    this->setPeerDelay(peerDelay);
+    vPeerDelay.record(CLOCKTIME_AS_SIMTIME(peerDelay));
 }
 
 }
