@@ -84,11 +84,15 @@ class GPtp : public ClockUserModuleBase
     cOutVector vTimeDifferenceGMbeforeSync;
     cOutVector vRateRatio;
     cOutVector vPeerDelay;
+  public:
+    static const MacAddress GPTP_MULTICAST_ADDRESS;
 
-protected:
+  protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;
     virtual void handleMessage(cMessage *msg) override;
+
+    virtual void handleSelfMessage(cMessage *msg);
 
   public:
     void setCorrectionField(clocktime_t cf);
@@ -104,12 +108,12 @@ protected:
     void sendSync(clocktime_t value);
     void sendFollowUp();
     void sendPdelayReq();
-    void sendPdelayResp(int portId);
+    void sendPdelayResp(GPtpReqAnswerEvent *req);
     void sendPdelayRespFollowUp(int portId);
 
     void processSync(const GPtpSync* gptp);
     void processFollowUp(const GPtpFollowUp* gptp);
-    void processPdelayReq(const GPtpPdelayReq* gptp);
+    void processPdelayReq(Packet *packet, const GPtpPdelayReq* gptp);
     void processPdelayResp(const GPtpPdelayResp* gptp);
     void processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp);
 

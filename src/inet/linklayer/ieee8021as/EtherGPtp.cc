@@ -18,10 +18,12 @@
 #include "inet/common/ModuleRef.h"
 #include "inet/linklayer/common/MacAddress.h"
 #include "inet/linklayer/ethernet/base/EthernetMacBase.h"
+#include "inet/linklayer/ethernet/common/Ethernet.h"
 #include "inet/linklayer/ethernet/common/EthernetMacHeader_m.h"
 #include "inet/linklayer/ieee8021as/GPtp.h"
 #include "inet/linklayer/ieee8021as/GPtpPacket_m.h"
 #include "inet/linklayer/ieee8021as/TableGPtp.h"
+#include "inet/physicallayer/wired/ethernet/EthernetPhyHeader_m.h"
 
 namespace inet {
 

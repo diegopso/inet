@@ -28,6 +28,7 @@ import inet.common.packet.Packet;
 
 cplusplus {{
 #include "inet/common/Units.h"
+#include "inet/clock/common/ClockEvent.h"
 
 namespace inet {
 using namespace inet::units::values;
@@ -65,9 +66,18 @@ enum GPtpMessageType
     GPTPTYPE_PDELAY_RESP_FOLLOW_UP = 1013;
 }
 
-class GPtpReqAnswerEvent extends ClockEvent
+enum GPtpSelfMsgKind {
+    GPTP_SELF_REQ_ANSWER_KIND = 101;
+    GPTP_SELF_MSG_FOLLOW_UP = 102;
+    GPTP_SELF_MSG_SYNC = 103;
+    GPTP_REQUEST_TO_SEND_SYNC = 104;
+    GPTP_SELF_MSG_PDELAY_REQ = 105;
+}
+
+message GPtpReqAnswerEvent extends ClockEvent
 {
-    Packet *pk @owned;
+    int portId;
+    clocktime_t ingressTimestamp;
 }
 
 class GPtpBase extends FieldsChunk
