@@ -19,8 +19,6 @@
 
 namespace inet {
 
-class EtherGPtp;
-
 class GPtp : public ClockUserModuleBase
 {
     //parameters:
@@ -30,7 +28,7 @@ class GPtp : public ClockUserModuleBase
     int slavePortId = -1; // interface ID of slave port
     std::set<int> masterPortIds; // interface IDs of master ports
     clocktime_t correctionField;
-    clocktime_t rateRatio;
+    double rateRatio;
 
     clocktime_t originTimestamp;
 
@@ -59,8 +57,7 @@ class GPtp : public ClockUserModuleBase
     clocktime_t receivedTimeRequester;
     clocktime_t transmittedTimeResponder;
     clocktime_t transmittedTimeRequester;   // sending time of last GPtpPdelayReq
-    double pDelayRespInterval;
-    double followUpInterval;
+    clocktime_t pDelayRespInterval;  // processing time between arrived PDelayReq and send of PDelayResp
 
     clocktime_t sentTimeSyncSync;
 
@@ -71,9 +68,7 @@ class GPtp : public ClockUserModuleBase
 
     // self timers:
     ClockEvent* selfMsgSync = nullptr;
-    ClockEvent* selfMsgFollowUp = nullptr;
     ClockEvent* selfMsgDelayReq = nullptr;
-    ClockEvent* selfMsgDelayResp = nullptr;
     ClockEvent* requestMsg = nullptr;
 
     // Statistics information: // TODO remove, and replace with emit() calls
@@ -95,37 +90,24 @@ class GPtp : public ClockUserModuleBase
     virtual void handleSelfMessage(cMessage *msg);
 
   public:
-    void setCorrectionField(clocktime_t cf);
-    void setRateRatio(clocktime_t cf);
-    void setPeerDelay(clocktime_t cf);
-    void setReceivedTimeSync(clocktime_t cf);
-    void setReceivedTimeFollowUp(clocktime_t cf);
-    void setReceivedTimeAtHandleMessage(clocktime_t cf);
-    void setOriginTimestamp(clocktime_t cf);
-
+    virtual ~GPtp();
     void sendPacketToNIC(Packet *packet, int portId);
 
     void sendSync(clocktime_t value);
-    void sendFollowUp();
+    void sendFollowUp(int portId);
     void sendPdelayReq();
     void sendPdelayResp(GPtpReqAnswerEvent *req);
     void sendPdelayRespFollowUp(int portId);
 
-    void processSync(const GPtpSync* gptp);
-    void processFollowUp(const GPtpFollowUp* gptp);
+    void processSync(Packet *packet, const GPtpSync* gptp);
+    void processFollowUp(Packet *packet, const GPtpFollowUp* gptp);
     void processPdelayReq(Packet *packet, const GPtpPdelayReq* gptp);
-    void processPdelayResp(const GPtpPdelayResp* gptp);
-    void processPdelayRespFollowUp(const GPtpPdelayRespFollowUp* gptp);
-
-    clocktime_t getCorrectionField();
-    clocktime_t getRateRatio();
-    clocktime_t getPeerDelay();
-    clocktime_t getReceivedTimeSync();
-    clocktime_t getReceivedTimeFollowUp();
-    clocktime_t getReceivedTimeAtHandleMessage();
-    clocktime_t getOriginTimestamp();
+    void processPdelayResp(Packet *packet, const GPtpPdelayResp* gptp);
+    void processPdelayRespFollowUp(Packet *packet, const GPtpPdelayRespFollowUp* gptp);
 
     clocktime_t getCalculatedDrift(IClock *clock, clocktime_t value) { return CLOCKTIME_ZERO; }
+
+    virtual void receiveSignal(cComponent *source, simsignal_t signal, cObject *obj, cObject *details) override;
 };
 
 }

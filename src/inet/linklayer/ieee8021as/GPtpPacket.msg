@@ -23,6 +23,7 @@
 
 import inet.clock.common.ClockEvent;
 import inet.clock.common.ClockTime;
+import inet.common.TagBase;
 import inet.common.packet.chunk.Chunk;
 import inet.common.packet.Packet;
 
@@ -68,7 +69,6 @@ enum GPtpMessageType
 
 enum GPtpSelfMsgKind {
     GPTP_SELF_REQ_ANSWER_KIND = 101;
-    GPTP_SELF_MSG_FOLLOW_UP = 102;
     GPTP_SELF_MSG_SYNC = 103;
     GPTP_REQUEST_TO_SEND_SYNC = 104;
     GPTP_SELF_MSG_PDELAY_REQ = 105;
@@ -83,8 +83,6 @@ message GPtpReqAnswerEvent extends ClockEvent
 class GPtpBase extends FieldsChunk
 {
     GPtpMessageType typeCode;
-    clocktime_t egressTimestamp;
-    clocktime_t ingressTimestamp;
 }
 
 class GPtpSync extends GPtpBase
@@ -132,5 +130,10 @@ class GPtpPdelayRespFollowUp extends GPtpBase
     clocktime_t sentTime;
     clocktime_t responseOriginTimestamp;
     int requestingPortIdentity;
+}
+
+class GPtpIngressTimeInd extends TagBase
+{
+    clocktime_t arrivalClockTime;
 }
 

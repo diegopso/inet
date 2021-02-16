@@ -13,16 +13,24 @@ import inet.applications.contract.IApp;
 //
 // ieee 802.1as gPTP
 //
-simple TableGPtp like IApp
+simple GPtp like IApp
 {
     parameters:
         string clockModule = default(""); // relative path of a module that implements IClock; optional
         string interfaceTableModule;
         string gPtpNodeType; // @enum("GPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
         string slavePort = default(""); // port for receiving time (empty for MASTER_NODE)
-        object masterPorts = default({}); // ports for sending out time (empty for SLAVE_NODE)
+        object masterPorts = default([]); // ports for sending out time (empty for SLAVE_NODE)
         double correctionField @unit(s) = default(0s);
         double rateRatio = default(1);  // initial rate ratio
+        double syncInterval @unit(s) = default(0.125s);
+        double pdelayInterval @unit(s) = default(1s);
+ 
+        // following parameters are used to schedule follow_up and pdelay_resp messages.
+        // These numbers must be enough large to prevent creating queue in MAC layer.
+        // It means it should be large than transmission time of message sent before
+        double pDelayRespInterval @unit(s) = default(8us);  // processing time between arrived PDelayReq and send of PDelayResp
+        double followUpInterval @unit(s) = default(7us);
     gates:
         input socketIn;
         output socketOut;

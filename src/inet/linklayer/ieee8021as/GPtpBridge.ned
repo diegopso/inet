@@ -13,9 +13,15 @@ import inet.node.ethernet.EthernetSwitch;
 module GPtpBridge extends EthernetSwitch
 {
     parameters:
-        eth[*].typename = "EthernetInterfaceGPtp";
-        tableGPtp.typename = "TableGPtp";
         clock.typename = default("SettableClock");
-        tableGPtp.gPtpNodeType = "BRIDGE_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
+        gPtp.gPtpNodeType = "BRIDGE_NODE"; // @enum("gPtpNodeType"): MASTER_NODE, BRIDGE_NODE, SLAVE_NODE
+        relayUnit.localDeliveryMacAddresses = default(hasStp ? ["01:80:C2:00:00:00", "01:80:C2:00:00:0E"] : ["01:80:C2:00:00:0E"]);
+    submodules:
+        gPtp: GPtp {
+            @display("p=700,100");
+        }
+    connections:
+        gPtp.socketOut --> nr.in++;
+        nr.out++ --> gPtp.socketIn;
 }
 

@@ -29,11 +29,11 @@ import inet.linklayer.contract.IMacAddressTable;
 import inet.linklayer.contract.IMacRelayUnit;
 import inet.linklayer.contract.IPolicyLayer;
 import inet.linklayer.contract.ISpanningTree;
-import inet.linklayer.contract.ITableGPtp;
 import inet.linklayer.ethernet.contract.IEthernetEncapsulation;
 import inet.linklayer.ethernet.contract.IEthernetLayer;
 import inet.linklayer.ieee8021q.Ieee8021qLayer;
 import inet.networklayer.common.InterfaceTable;
+
 
 //
 // Model of an Ethernet switch.
@@ -125,9 +125,6 @@ module EthernetSwitch
         }
         cutthrough: MessageDispatcher if enableCutthrough {
             @display("p=800,600;b=1200,5");
-        }
-        tableGPtp: <default("")> like ITableGPtp if typename != "" {
-            @display("p=100,680;is=s");
         }
     connections:
         ethernet.lowerLayerOut --> li.in++ if exists(ethernet);
