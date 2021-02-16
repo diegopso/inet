@@ -71,9 +71,9 @@ void PacketTransmitter::endTx()
     // 1. check current state
     ASSERT(isTransmitting());
     // 2. notify subscribers
+    emit(transmissionEndedSignal, txSignal);
     auto packet = check_and_cast<Packet *>(txSignal->decapsulate());
     handlePacketProcessed(packet);
-    emit(transmissionEndedSignal, txSignal);
     // 3. clear internal state
     delete txSignal;
     txSignal = nullptr;
