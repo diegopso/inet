@@ -112,7 +112,7 @@ module NodeBase like INetworkNode
             @display("p=53,350,r,10");
         }
         lo0: LoopbackInterface {
-            @display("p=78,406");
+            @display("p=157,231");
         }
         wlan[numRadios]: <default("Ieee80211Nic")> like IWirelessNic {
             parameters:
@@ -128,11 +128,11 @@ module NodeBase like INetworkNode
         }
         ext[numExtInterfaces]: <default("ExtInterface")> like IExternalNic {
             parameters:
-                @display("p=149,406,row,10;q=txQueue;i=block/ifcard");
+                @display("p=320,125,row,10;q=txQueue;i=block/ifcard");
         }
         tun[numTunInterfaces]: <default("TunInterface")> like ITunNic {
             parameters:
-                @display("p=213,406,row,10;q=txQueue;i=block/ifcard");
+                @display("p=534,92,row,10;q=txQueue;i=block/ifcard");
         }
 
     connections allowunconnected:

@@ -56,7 +56,7 @@ module IPv6NetworkLayer like INetworkLayer
         // TODO: rename to ip
         ipv6: IPv6 {
             parameters:
-                @display("p=84,129");
+                @display("p=124,168");
             gates:
                 queueIn[sizeof(ifIn)];
                 queueOut[sizeof(ifIn)];
@@ -71,7 +71,7 @@ module IPv6NetworkLayer like INetworkLayer
         }
         neighbourDiscovery: IPv6NeighbourDiscovery {
             parameters:
-                @display("p=257,149");
+                @display("p=256,168");
         }
         iptunneling: <default(firstAvailable("IPv6Tunneling"))> like IIPv6Tunneling {
             parameters:

@@ -18,7 +18,7 @@
 
 namespace inet;
 
-message RegisterTransportProtocolCommand
+packet RegisterTransportProtocolCommand
 {
     int protocol;
 }
